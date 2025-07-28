@@ -1,66 +1,22 @@
-<div align="center">
-  <img width="187" src="https://github.com/infiniflow/infinity/assets/7248/015e1f02-1f7f-4b09-a0c2-9d261cd4858b" alt="Infinity logo"/>
-</div>
+# Balancing the Blend: An Experimental Analysis of Trade-offs in Hybrid Search
 
+*Official Implementation for our paper submitted to VLDB 2026*
 
-<p align="center">
-    <b>The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense embedding, sparse embedding, tensor and full-text</b>
-</p>
+[**Paper PDF**](paper.pdf) | [**Project Website**](https://github.com/infiniflow/infinity) | [**License: Apache 2.0**](#license)
 
-<h4 align="center">
-  <a href="https://infiniflow.org/docs/dev/category/get-started">Document</a> |
-  <a href="https://infiniflow.org/docs/dev/benchmark">Benchmark</a> |
-  <a href="https://twitter.com/infiniflowai">Twitter</a> |
-  <a href="https://discord.gg/jEfRUwEYEV">Discord</a>
-</h4>
+---
 
+## 📖 Overview
 
-Infinity is a cutting-edge AI-native database that provides a wide range of search capabilities for rich data types such as dense vector, sparse vector, tensor, full-text, and structured data. It provides robust support for various LLM applications, including search, recommenders, question-answering, conversational AI, copilot, content generation, and many more **RAG** (Retrieval-augmented Generation) applications.
+This repository contains the full implementation and experimental data for our paper, **"Balancing the Blend: An Experimental Analysis of Trade-offs in Hybrid Search".**
 
-- [Key Features](#-key-features)
-- [Get Started](#-get-started)
-- [Document](#-document)
-- [Roadmap](#-roadmap)
-- [Community](#-community)
+Hybrid search, combining lexical and semantic retrieval, is now a foundational technology for modern information retrieval. However, the architectural design space for these systems is vast and complex, yet a systematic, empirical understanding of the trade-offs among their core components—retrieval paradigms, combination schemes, and re-ranking methods—is critically lacking.
 
-## ⚡️ Performance
+This work presents the **first systematic benchmark** of advanced hybrid search architectures, informed by our experience building the [**Infinity**](https://github.com/infiniflow/infinity) open-source database. We evaluate four retrieval paradigms (FTS, SVS, DVS, TenS) and their 15 combinations across 11 real-world datasets to provide a data-driven map of the performance landscape. This repository provides all the necessary tools to reproduce our findings and to extend this research.
 
-<div class="column" align="middle">
-  <img src="https://github.com/user-attachments/assets/c4c98e23-62ac-4d1a-82e5-614bca96fe0a" alt="Infinity performance comparison"/>
-</div>
-
-## 🌟 Key Features
-
-Infinity comes with high performance, flexibility, ease-of-use, and many features designed to address the challenges facing the next-generation AI applications:
-
-### 🚀 Incredibly fast
-
-- Achieves 0.1 milliseconds query latency and 15K+ QPS on million-scale vector datasets.
-- Achieves 1 millisecond latency and 12K+ QPS in full-text search on 33M documents.
-
-> See the [Benchmark report](https://infiniflow.org/docs/dev/benchmark) for more information.
-
-### 🔮 Powerful search
-
-- Supports a hybrid search of dense embedding, sparse embedding, tensor, and full text, in addition to filtering.
-- Supports several types of rerankers including RRF, weighted sum and **ColBERT**.
-
-### 🍔 Rich data types
-
-Supports a wide range of data types including strings, numerics, vectors, and more.
-
-### 🎁 Ease-of-use
-
-- Intuitive Python API. See the [Python API](https://infiniflow.org/docs/dev/pysdk_api_reference)
-- A single-binary architecture with no dependencies, making deployment a breeze.
-- Embedded in Python as a module and friendly to AI developers.  
-
-## 🎮 Get Started
-
-This section provides guidance on deploying the Infinity database using Docker, with the client and server as separate processes. 
+## 🚀 Getting Started
 
 ### Prerequisites
-
 - CPU: x86_64 with AVX2 support.
 - OS:
   - Linux with glibc 2.17+.
@@ -98,45 +54,87 @@ If you are on Windows 10+, you must enable WSL or WSL2 to deploy Infinity using 
 pip install infinity-sdk==0.6.0.dev4
 ```
 
-### Run a vector search
-
-```python
-import infinity
-
-infinity_obj = infinity.connect(infinity.NetworkAddress("<SERVER_IP_ADDRESS>", 23817)) 
-db_object = infinity_object.get_database("default_db")
-table_object = db_object.create_table("my_table", {"num": {"type": "integer"}, "body": {"type": "varchar"}, "vec": {"type": "vector, 4, float"}})
-table_object.insert([{"num": 1, "body": "unnecessary and harmful", "vec": [1.0, 1.2, 0.8, 0.9]}])
-table_object.insert([{"num": 2, "body": "Office for Harmful Blooms", "vec": [4.0, 4.2, 4.3, 4.5]}])
-res = table_object.output(["*"])
-                  .match_dense("vec", [3.0, 2.8, 2.7, 3.1], "float", "ip", 2)
-                  .to_pl()
-print(res)
-```
-
-## 🔧 Deploy Infinity using binary
+### 🔧 Deploy Infinity using binary
 
 If you wish to deploy Infinity using binary with the server and client as separate processes, see the [Deploy infinity using binary](https://infiniflow.org/docs/dev/deploy_infinity_server) guide.
 
-## 🔧 Build from Source
+### 🔧 Build from Source
 
 See the [Build from Source](https://infiniflow.org/docs/dev/build_from_source) guide.
 
-## 📚 Document
+## 📊 Running the Benchmark
 
-- [Quickstart](https://infiniflow.org/docs/dev/)
-- [Python API](https://infiniflow.org/docs/dev/pysdk_api_reference)
-- [HTTP API](https://infiniflow.org/docs/dev/http_api_reference)
-- [References](https://infiniflow.org/docs/dev/category/references)
-- [FAQ](https://infiniflow.org/docs/dev/FAQ)
+All scripts and results are located in the `exps/` directory. For detailed documentation on the underlying Python API, please refer to the [official documentation](https://infiniflow.org/docs/dev/pysdk_api_reference).
 
-## 📜 Roadmap
+### Step 1: Download and Prepare Datasets
+We provide direct download links for all 11 datasets in the table below (see [Datasets](#-datasets)). Please download the datasets you wish to evaluate and place the unzipped contents into the corresponding subdirectories within the `exps/test/` directory.
 
-See the [Infinity Roadmap 2025](https://github.com/infiniflow/infinity/issues/2393)
+To generate the dense vectors, sparse vectors, and tensors for a given dataset, please refer to the scripts provided in the `python/benchmark/mldr_benchmark/` directory.
 
-## 🙌 Community
+### Step 2: Import Data
+For each dataset, run the `data_insert.py` script located in its subdirectory. This will load the texts, dense vectors, sparse vectors, and tensors into the hybrid search system.
 
-- [Discord](https://discord.gg/jEfRUwEYEV)
-- [Twitter](https://twitter.com/infiniflowai)
-- [GitHub Discussions](https://github.com/infiniflow/infinity/discussions)
+### Step 3: Build Indexes
+After importing the data, run the following scripts in the same directory to build the specialized index for each retrieval paradigm:
+- `fulltext_index.py`: Constructs the full-text index for FTS.
+- `sparse_index.py`: Constructs the sparse vector index for SVS.
+- `dense_index.py`: Constructs the dense vector index for DVS.
+- `tensor_index.py`: Constructs the tensor index for TenS.
 
+### Step 4: Run Retrieval Experiments
+You can run experiments for specific types of architectures. The scripts are organized into the following directories within `exps/test/[dataset]/search/`:
+
+- `single_road/`: Contains scripts to evaluate the performance of the four individual retrieval paradigms (FTS, SVS, DVS, TenS).
+- `two_road/`: Contains scripts to test all six two-path retrieval combinations (e.g., FTS + DVS).
+- `three_road/`: Contains scripts to assess all four three-path retrieval combinations (e.g., FTS + DVS + SVS).
+- `four_road/`: Contains the script to evaluate the performance of the combined four-path approach.
+
+> **Note:** To run all retrieval combinations on a single dataset, navigate to the corresponding experiment directory and execute its `batch_search.sh` script. For example, to run all experiments for the `CQAD(en)` dataset:
+```bash
+cd exps/test/CQADupStack_en
+bash batch_search.sh
+```
+
+## 📈 Results
+
+A comprehensive analysis of the experimental results is presented in the main paper. For additional details, including a full breakdown of the results, please refer to the supplementary materials available [here](exps/results/README.md).
+
+## 📚 Datasets
+
+Our evaluation uses 11 diverse real-world datasets. The table below provides statistics and download links.
+
+| Dataset  | Domain           | Task                           | #Corpus   | #Query | Download Link |
+| :------- | :--------------- | :----------------------------- | :-------- | :----- | :--- |
+| MSMA(en) | Miscellaneous    | Passage Retrieval              | 8,841,823 | 43     | [Link](https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/msmarco.zip) |
+| DBPE(en) | Wikipedia        | Entity Retrieval               | 4,635,922 | 400    | [Link](https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/dbpedia-entity.zip) |
+| MCCN(zh) | News             | Question Answering             | 935,162   | 339    | [Link](https://huggingface.co/datasets/intfloat/multilingual_cc_news) |
+| TOUC(en) | Miscellaneous    | Argument Retrieval             | 382,545   | 49     | [Link](https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/webis-touche2020.zip) |
+| MLDR(zh) | Wikipedia, Wudao | Long-Document Retrieval        | 200,000   | 800    | [Link](https://huggingface.co/datasets/Shitao/MLDR) |
+| MLDR(en) | Wikipedia        | Long-Document Retrieval        | 200,000   | 800    | [Link](https://huggingface.co/datasets/Shitao/MLDR) |
+| TREC(en) | Bio-Medical      | Bio-Medical Information Retrieval | 171,332   | 50     | [Link](https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/trec-covid.zip) |
+| FIQA(en) | Finance          | Question Answering             | 57,638    | 648    | [Link](https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/fiqa.zip) |
+| CQAD(en) | StackExchange    | Duplicate-Question Retrieval   | 40,221    | 1,570  | [Link](https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/cqadupstack.zip) |
+| SCID(en) | Scientific       | Citation Prediction            | 25,657    | 1,000  | [Link](https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scidocs.zip) |
+| SCIF(en) | Scientific       | Fact Checking                  | 5,183     | 809    | [Link](https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scifact.zip) |
+
+*For detailed statistics including corpus sizes, please refer to the `README.md` file in the `exps/datasets/` directory.*
+
+## 📜 Citation
+
+If you find this work useful for your research, please consider citing our paper:
+
+```bibtex
+@article{hybridsearch25-infinity,
+  title={Balancing the Blend: An Experimental Analysis of Trade-offs in Hybrid Search},
+  author={Wang, Mengzhao and Tan, Boyu and Gao, Yunjun and Jin, Hai and Zhang, Yingfeng and Ke, Xiangyu and Xu, Xiangliang and Zhu, Yifan},
+  journal={arXiv preprint arXiv:xxxx.xxxxx},
+  year={2025}
+}
+```
+
+## 🤝 Contribution
+We welcome contributions from the community to improve and extend this benchmark framework. We encourage researchers and developers to help by reporting bugs, proposing new features by opening an issue, or submitting code changes via a pull request. To ensure a smooth collaboration, please first refer to our detailed contribution guidelines outlined in [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## 📄 License
+
+This project is licensed under the **Apache 2.0 License**. See the [LICENSE](./LICENSE) file for details.

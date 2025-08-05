@@ -1,4 +1,4 @@
-# Copyright(C) 2023 HybridSearchFlow, Inc. All rights reserved.
+# Copyright(C) 2023 InfiniFlow, Inc. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,21 +13,21 @@
 # limitations under the License.
 
 """
-This example is to connect local hybridsearch instance, create table, insert data, search the data
+This example is to connect local infinity instance, create table, insert data, search the data
 """
 
-# import hybridsearch_embedded as hybridsearch
+# import infinity_embedded as infinity
 from multi_client import use_multi_client
 import os
 import time
-import hybridsearch
+import infinity
 import sys
 
-from hybridsearch.common import LOCAL_HOST
+from infinity.common import LOCAL_HOST
 import pandas as pd
 from utils import add_escape_characters
 
-path_prefix = "/home/ubuntu/hybridsearch/experiments/load_experiments/CQADupStack_en/search"
+path_prefix = "/home/ubuntu/infinity/experiments/load_experiments/CQADupStack_en/search"
 
 def remove_extremes_and_average(lst):
     """
@@ -54,11 +54,11 @@ def remove_extremes_and_average(lst):
     return sum(filtered) / len(filtered)
 
 cost_time = 0
-def fulltext_search(hybridsearch_table, question):
+def fulltext_search(infinity_table, question):
      global cost_time
      begin_time = time.time()
      res = (
-                hybridsearch_table.output(["docid_col","fulltext_col"])
+                infinity_table.output(["docid_col","fulltext_col"])
                 .match_text("fulltext_col", question[0], 10)
                 # .to_pl()
             )
@@ -70,7 +70,7 @@ def fulltext_search(hybridsearch_table, question):
      return qb_result, extra_result
 
 def GetQuestions():
-    df = pd.read_csv('/home/ubuntu/hybridsearch/experiments/small_embedding/CQADupStack_en' + '/english/queries_decline_with_id.csv')
+    df = pd.read_csv('/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en' + '/english/queries_decline_with_id.csv')
     questions = []
     for _, row in df.iterrows():
         questions.append((add_escape_characters(row['text']).strip(),row['id']))
@@ -78,12 +78,12 @@ def GetQuestions():
 
 def single_search(questions):
     try:
-        #  Use hybridsearch module to connect a remote server
-        hybridsearch_instance = hybridsearch.connect(LOCAL_HOST)
+        #  use infinity module to connect a remote server
+        infinity_instance = infinity.connect(LOCAL_HOST)
 
         # 'default_db' is the default database
-        db_instance = hybridsearch_instance.get_database("default_db")
-        hybridsearch_table = db_instance.get_table("CQADupStack_en_Table")
+        db_instance = infinity_instance.get_database("default_db")
+        infinity_table = db_instance.get_table("CQADupStack_en_Table")
         with open(path_prefix + '/single_road/fulltext_result.txt','w') as result_file:
             id = 0
             time_cost = 0
@@ -91,7 +91,7 @@ def single_search(questions):
             for question in questions:
                 id += 1
                 begin_time = time.time()
-                qb_result, extra_result = fulltext_search(hybridsearch_table, question)
+                qb_result, extra_result = fulltext_search(infinity_table, question)
                 end_time = time.time()
                 time_cost += (end_time - begin_time) * 1000
                 for i in range(len(qb_result['docid_col'])):
@@ -101,7 +101,7 @@ def single_search(questions):
                     print(extra_result)
             time_cost = time_cost / len(questions)
             print(f"time_cost: {time_cost} ms")
-        hybridsearch_instance.disconnect()
+        infinity_instance.disconnect()
         return time_cost
     except Exception as e:
         print(str(e))

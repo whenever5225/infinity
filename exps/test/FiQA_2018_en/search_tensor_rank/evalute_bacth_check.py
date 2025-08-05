@@ -2,9 +2,9 @@ import os
 import numpy as np
 import pandas as pd
 
-qrel_file_path = "/home/ubuntu/hybridsearch/experiments/load_experiments/FiQA_2018_en/qrels/test.tsv"
-# query_result_file_path = "/home/ubuntu/hybridsearch/experiments/load_experiments/FiQA-2018_en/FiQA_2018_en.search_tensor_rank1000/four_roads/fulltext_dense_sparse_tensor_result.txt"
-path_prefix = "/home/ubuntu/hybridsearch/experiments/load_experiments/FiQA_2018_en/search_tensor_rank/"
+qrel_file_path = "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/qrels/test.tsv"
+# query_result_file_path = "/home/ubuntu/infinity/experiments/load_experiments/FiQA-2018_en/FiQA_2018_en.search_tensor_rank1000/four_roads/fulltext_dense_sparse_tensor_result.txt"
+path_prefix = "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search_tensor_rank/"
 post_file_paths = [
     ## two_roads
     "two_roads/dense_sparse_result.txt","two_roads/fulltext_sparse_result.txt","two_roads/fulltext_dense_result.txt",

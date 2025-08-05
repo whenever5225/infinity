@@ -52,12 +52,12 @@ def terminate_process_tree(pid):
 
 if __name__ == "__main__":
     # 
-    file_path = '/home/ubuntu/hybridsearch/experiments/query_memory_file'
+    file_path = '/home/ubuntu/infinity/experiments/query_memory_file'
     content = read_file_content(file_path)
 
 
     # 
-    service_command = "/home/ubuntu/hybridsearch/cmake-build-release/src/hybridsearch -f /home/ubuntu/hybridsearch/conf/hybridsearch_conf.toml"  #  HTTP 
+    service_command = "/home/ubuntu/infinity/cmake-build-release/src/infinity -f /home/ubuntu/infinity/conf/infinity_conf.toml"  #  HTTP 
     process = subprocess.Popen(service_command, shell=True)
     time.sleep(3)
     print(f" ID: {process.pid}")

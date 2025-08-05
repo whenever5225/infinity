@@ -1,31 +1,31 @@
 
 
 """
-This example is to connect local hybridsearch instance, create table, insert data, search the data
+This example is to connect local infinity instance, create table, insert data, search the data
 """
 
-# import hybridsearch_embedded as hybridsearch
+# import infinity_embedded as infinity
 import signal
 from multi_client import use_multi_client
 import time
-import hybridsearch
+import infinity
 import sys
-import hybridsearch.index as index
-from hybridsearch.errors import ErrorCode
-from hybridsearch.common import ConflictType, LOCAL_HOST, SparseVector
+import infinity.index as index
+from infinity.errors import ErrorCode
+from infinity.common import ConflictType, LOCAL_HOST, SparseVector
 
 try:
-    #  Use hybridsearch module to connect a remote server
-    hybridsearch_instance = hybridsearch.connect(LOCAL_HOST)
+    #  use infinity module to connect a remote server
+    infinity_instance = infinity.connect(LOCAL_HOST)
     lang = 'en'
     ft_params = None
     # print("Start creating Hnsw index.")
-    hybridsearch_db = hybridsearch_instance.get_database('default_db')
-    hybridsearch_table = hybridsearch_db.get_table("mldr_en_Table")
-    hybridsearch_table.drop_index('mldr_en_hnsw_index',ConflictType.Ignore)
+    infinity_db = infinity_instance.get_database('default_db')
+    infinity_table = infinity_db.get_table("mldr_en_Table")
+    infinity_table.drop_index('mldr_en_hnsw_index',ConflictType.Ignore)
     print("Start creating Hnsw index...")
     begin_hnsw_time = time.time()
-    res = hybridsearch_table.create_index("mldr_en_hnsw_index", index.IndexInfo("dense_col", index.IndexType.Hnsw,
+    res = infinity_table.create_index("mldr_en_hnsw_index", index.IndexInfo("dense_col", index.IndexType.Hnsw,
                                                                             {
                                                                                 "m": "16",
                                                                                 "ef_construction": "200",
@@ -34,7 +34,7 @@ try:
                                                                             }),
                                             ConflictType.Error)
     end_hnsw_time = time.time()
-    print(hybridsearch_table.show_index("mldr_en_hnsw_index"))
+    print(infinity_table.show_index("mldr_en_hnsw_index"))
     print("end hnsw time: ",(end_hnsw_time - begin_hnsw_time)*1000,'ms')
     print("Finish creating Hnsw index.")
     assert res.error_code == ErrorCode.OK

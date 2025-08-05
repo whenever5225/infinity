@@ -1,4 +1,4 @@
-# Copyright(C) 2023 HybridSearchFlow, Inc. All rights reserved.
+# Copyright(C) 2023 InfiniFlow, Inc. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,25 +13,25 @@
 # limitations under the License.
 
 """
-This example is to connect local hybridsearch instance, create table, insert data, search the data
+This example is to connect local infinity instance, create table, insert data, search the data
 """
 
-# import hybridsearch_embedded as hybridsearch
+# import infinity_embedded as infinity
 import signal
 from multi_client import use_multi_client
 import os
 import re
 import time
-import hybridsearch
+import infinity
 import sys
-from hybridsearch.common import SparseVector
-from hybridsearch.common import LOCAL_HOST
+from infinity.common import SparseVector
+from infinity.common import LOCAL_HOST
 import pandas as pd
 from MLDR_en.search.colbert_read import load_colbert_list
 from utils import add_escape_characters
 from MLDR_en.search.vec_read import load_dense, load_sparse
 
-path_prefix = "/home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_en/search100"
+path_prefix = "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search100"
 
 def remove_extremes_and_average(lst):
     """
@@ -89,11 +89,11 @@ def extract_number(filename):
     return 0
 
 cost_time = 0
-def dense_sparse_tensor_search(hybridsearch_table, question):
+def dense_sparse_tensor_search(infinity_table, question):
      global cost_time
      begin_time = time.time()
      res = (
-                hybridsearch_table.output(["docid_col","fulltext_col"])
+                infinity_table.output(["docid_col","fulltext_col"])
                 # .match_text("fulltext_col", question[0], 100)
                 .match_dense("dense_col", question[0], "float", "ip", 100,{"ef": "600"})
                 .match_sparse("sparse_col", question[1], "ip", 100)
@@ -109,7 +109,7 @@ def dense_sparse_tensor_search(hybridsearch_table, question):
      return qb_result, extra_result
 
 def GetAllQuestions():
-    df = pd.read_csv('/home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv')
+    df = pd.read_csv('/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv')
     query_ids = []
     fulltext_questions = []
     dense_questions = []
@@ -178,12 +178,12 @@ def GetQuestions():
 def single_search(questions):
 
     try:
-        #  Use hybridsearch module to connect a remote server
-        hybridsearch_instance = hybridsearch.connect(LOCAL_HOST)
+        #  use infinity module to connect a remote server
+        infinity_instance = infinity.connect(LOCAL_HOST)
 
         # 'default_db' is the default database
-        db_instance = hybridsearch_instance.get_database("default_db")
-        hybridsearch_table = db_instance.get_table("MLDR_en_Table")
+        db_instance = infinity_instance.get_database("default_db")
+        infinity_table = db_instance.get_table("MLDR_en_Table")
         with open(path_prefix + '/three_roads/dense_sparse_tensor_result.txt','w') as result_file:
             id = 0
             time_cost = 0
@@ -191,7 +191,7 @@ def single_search(questions):
             for question in questions:
                 id += 1
                 begin_time = time.time()
-                qb_result, extra_result = dense_sparse_tensor_search(hybridsearch_table, question)
+                qb_result, extra_result = dense_sparse_tensor_search(infinity_table, question)
                 end_time = time.time()
                 time_cost += (end_time - begin_time) * 1000
                 for i in range(len(qb_result['docid_col'])):
@@ -201,7 +201,7 @@ def single_search(questions):
                     print(extra_result)
             time_cost = time_cost / len(questions)
             print(f"time_cost: {time_cost} ms")
-        hybridsearch_instance.disconnect()
+        infinity_instance.disconnect()
         return time_cost
     except Exception as e:
         print(str(e))
@@ -209,7 +209,7 @@ def single_search(questions):
 
 if __name__ == "__main__":
     # 
-    service_command = "/home/ubuntu/hybridsearch/cmake-build-release/src/hybridsearch -f /home/ubuntu/hybridsearch/conf/hybridsearch_conf.toml"  #  HTTP 
+    service_command = "/home/ubuntu/infinity/cmake-build-release/src/infinity -f /home/ubuntu/infinity/conf/infinity_conf.toml"  #  HTTP 
     process = subprocess.Popen(service_command, shell=True)
     time.sleep(3)
     print(f" ID: {process.pid}")
@@ -227,7 +227,7 @@ if __name__ == "__main__":
         tfile.write(f"{cost_time/len(questions)} ms")
         tfile.flush()
     # 
-    file_path = '/home/ubuntu/hybridsearch/experiments/query_memory_file'
+    file_path = '/home/ubuntu/infinity/experiments/query_memory_file'
     content = read_file_content(file_path)
     with open(current_dir + "/" + current_file_name_without_extension + ".memory",'w') as mfile:
         mfile.write(content)

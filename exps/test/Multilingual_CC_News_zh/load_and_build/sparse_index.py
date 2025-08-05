@@ -1,4 +1,4 @@
-# Copyright(C) 2023 HybridSearchFlow, Inc. All rights reserved.
+# Copyright(C) 2023 InfiniFlow, Inc. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,50 +13,50 @@
 # limitations under the License.
 
 """
-This example is to connect local hybridsearch instance, create table, insert data, search the data
+This example is to connect local infinity instance, create table, insert data, search the data
 """
 
-# import hybridsearch_embedded as hybridsearch
+# import infinity_embedded as infinity
 import os
 import subprocess
 from multi_client import use_multi_client
 import time
-import hybridsearch
+import infinity
 import sys
-import hybridsearch.index as index
-from hybridsearch.errors import ErrorCode
-from hybridsearch.common import ConflictType, LOCAL_HOST, SparseVector
+import infinity.index as index
+from infinity.errors import ErrorCode
+from infinity.common import ConflictType, LOCAL_HOST, SparseVector
 
 from Multilingual_CC_News_zh.search_tensor_rank.three_roads.sparse_dense_fulltext_search import read_file_content, terminate_process_tree
 
 try:
     time.sleep(3)
     # 
-    service_command = "/home/ubuntu/hybridsearch/cmake-build-release/src/hybridsearch -f /home/ubuntu/hybridsearch/conf/hybridsearch_conf.toml"  #  HTTP 
+    service_command = "/home/ubuntu/infinity/cmake-build-release/src/infinity -f /home/ubuntu/infinity/conf/infinity_conf.toml"  #  HTTP 
     process = subprocess.Popen(service_command, shell=True)
     time.sleep(3)
     print(f" ID: {process.pid}")
     print(__file__)
-    #  Use hybridsearch module to connect a remote server
-    hybridsearch_instance = hybridsearch.connect(LOCAL_HOST)
+    #  use infinity module to connect a remote server
+    infinity_instance = infinity.connect(LOCAL_HOST)
     lang = 'en'
     ft_params = None
     # print("Start creating Hnsw index.")
-    hybridsearch_db = hybridsearch_instance.get_database('default_db')
-    hybridsearch_table = hybridsearch_db.get_table("Multilingual_CC_News_zh_Table")
-    hybridsearch_table.drop_index('Multilingual_CC_News_zh_bmp_index',ConflictType.Ignore)
+    infinity_db = infinity_instance.get_database('default_db')
+    infinity_table = infinity_db.get_table("Multilingual_CC_News_zh_Table")
+    infinity_table.drop_index('Multilingual_CC_News_zh_bmp_index',ConflictType.Ignore)
     print("Start creating Bmp index...")
     begin_hnsw_time = time.time()
-    res = hybridsearch_table.create_index("Multilingual_CC_News_zh_bmp_index", index.IndexInfo("sparse_col", index.IndexType.BMP,
+    res = infinity_table.create_index("Multilingual_CC_News_zh_bmp_index", index.IndexInfo("sparse_col", index.IndexType.BMP,
                                                                             {
                                                                                 "block_size": "8",
                                                                                 "compress_type": "compress",
                                                                                 # "metric": "ip",
                                                                             }),
                                                ConflictType.Error)
-    hybridsearch_table.optimize("Multilingual_CC_News_zh_bmp_index", {"topk": "1000"})
+    infinity_table.optimize("Multilingual_CC_News_zh_bmp_index", {"topk": "1000"})
     end_hnsw_time = time.time()
-    hybridsearch_table.show_index("Multilingual_CC_News_zh_bmp_index")
+    infinity_table.show_index("Multilingual_CC_News_zh_bmp_index")
     print("end Bmp time: ",(end_hnsw_time - begin_hnsw_time)*1000,'ms')
     print("Finish creating BMP index.")
     assert res.error_code == ErrorCode.OK
@@ -70,7 +70,7 @@ try:
         tfile.write(f"{cost_time} ms")
         tfile.flush()
     # 
-    file_path = '/home/ubuntu/hybridsearch/experiments/peak_memory_index_file'
+    file_path = '/home/ubuntu/infinity/experiments/peak_memory_index_file'
     content = read_file_content(file_path)
     with open(current_dir + "/" + current_file_name_without_extension + ".memory",'w') as mfile:
         mfile.write(content)

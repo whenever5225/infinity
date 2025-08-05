@@ -1,4 +1,4 @@
-# Copyright(C) 2023 HybridSearchFlow, Inc. All rights reserved.
+# Copyright(C) 2023 InfiniFlow, Inc. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ import subprocess
 import time
 import os
 from tqdm import tqdm
-import hybridsearch
-from hybridsearch.common import ConflictType, LOCAL_HOST, SparseVector
-import hybridsearch.index as index
-from hybridsearch.errors import ErrorCode
+import infinity
+from infinity.common import ConflictType, LOCAL_HOST, SparseVector
+import infinity.index as index
+from infinity.errors import ErrorCode
 from Multilingual_CC_News_zh.search_tensor_rank.three_roads.sparse_dense_fulltext_search import terminate_process_tree
 from vec_read import load_dense
 from vec_read import load_sparse
@@ -35,7 +35,7 @@ def extract_number(filename):
         return int(match.group(1))
     return 0
 
-class hybridsearchClientForInsert:
+class InfinityClientForInsert:
     def __init__(self):
         self.test_db_name = "default_db"
         self.test_table_name_prefix = "Multilingual_CC_News_zh_Table"
@@ -43,14 +43,14 @@ class hybridsearchClientForInsert:
                                   "dense_col": {"type": "vector,1024,float"},
                                   "sparse_col": {"type": "sparse,250002,float,int"},
                                   "tensor_col": {"type": "tensor,64,float"}}
-        self.hybridsearch_obj = hybridsearch.connect(LOCAL_HOST)
-        self.hybridsearch_db = self.hybridsearch_obj.create_database(self.test_db_name, ConflictType.Ignore)
-        self.hybridsearch_table = None
+        self.infinity_obj = infinity.connect(LOCAL_HOST)
+        self.infinity_db = self.infinity_obj.create_database(self.test_db_name, ConflictType.Ignore)
+        self.infinity_table = None
 
     def create_test_table(self):
         table_name = self.test_table_name_prefix
-        self.hybridsearch_db.drop_table(table_name, ConflictType.Ignore)
-        self.hybridsearch_table = self.hybridsearch_db.create_table(table_name, self.test_table_schema)
+        self.infinity_db.drop_table(table_name, ConflictType.Ignore)
+        self.infinity_table = self.infinity_db.create_table(table_name, self.test_table_schema)
         print("Create table successfully.")
 
     def main(self):
@@ -66,7 +66,7 @@ class hybridsearchClientForInsert:
         dense_embedding_dir = '/home/ubuntu/data_download_data/embedding_reserve/Multilingual_CC_News_zh/dense_embeddings/vectors'
 
         sparse_embedding_dir = '/home/ubuntu/data_download_data/embedding_reserve/Multilingual_CC_News_zh/sparse_embeddings/vectors'
-        tensor_embedding_dir = '/home/ubuntu/large_disk/hybridsearch/Multilingual_CC_News_zh/tensor_embeddings/vectors'
+        tensor_embedding_dir = '/home/ubuntu/large_disk/infinity/Multilingual_CC_News_zh/tensor_embeddings/vectors'
         dense_names = [f for f in os.listdir(dense_embedding_dir) if os.path.isfile(os.path.join(dense_embedding_dir, f))]
         sparse_names = [f for f in os.listdir(sparse_embedding_dir) if os.path.isfile(os.path.join(sparse_embedding_dir, f))]
         tensor_names = [f for f in os.listdir(tensor_embedding_dir) if os.path.isfile(os.path.join(tensor_embedding_dir, f))]
@@ -121,7 +121,7 @@ class hybridsearchClientForInsert:
                 tensor_idx += 1
                 buffer.append(insert_dict)
             while len(buffer) >= 500:
-                self.hybridsearch_table.insert(buffer[:500])
+                self.infinity_table.insert(buffer[:500])
                 buffer = buffer[500:]
             if dense_idx >= len(dense_vectors):
                 dense_idx = 0
@@ -133,7 +133,7 @@ class hybridsearchClientForInsert:
                 tensor_idx = 0
                 tensor_file_idx += 1
         if len(buffer) > 0:
-            self.hybridsearch_table.insert(buffer)
+            self.infinity_table.insert(buffer)
         end_insert_time = time.time()
         print("insert time: ",(end_insert_time - begin_insert_time)*1000,'ms')
         current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -152,12 +152,12 @@ class hybridsearchClientForInsert:
 if __name__ == "__main__":
     time.sleep(3)
     # 
-    service_command = "/home/ubuntu/hybridsearch/cmake-build-release/src/hybridsearch -f /home/ubuntu/hybridsearch/conf/hybridsearch_conf.toml"  #  HTTP 
+    service_command = "/home/ubuntu/infinity/cmake-build-release/src/infinity -f /home/ubuntu/infinity/conf/infinity_conf.toml"  #  HTTP 
     process = subprocess.Popen(service_command, shell=True)
     time.sleep(3)
     print(f" ID: {process.pid}")
     print(__file__)
-    hybridsearch_client = hybridsearchClientForInsert()
-    hybridsearch_client.main()
+    infinity_client = InfinityClientForInsert()
+    infinity_client.main()
     terminate_process_tree(process.pid)
     print(f" {process.pid} ")

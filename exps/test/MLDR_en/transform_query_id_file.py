@@ -10,4 +10,4 @@ df = df[['query_id', 'query']]
 df = df.rename(columns={'query_id': '_id', 'query': 'text'})
 
 # 4. 
-df.to_csv("/home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_en/queries_with_id.csv", index=False, encoding="utf-8")
+df.to_csv("/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/queries_with_id.csv", index=False, encoding="utf-8")

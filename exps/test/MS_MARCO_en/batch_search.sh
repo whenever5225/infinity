@@ -18,7 +18,7 @@ python3 $PWD/search/two_roads/sparse_fulltext_search.py
 ### three roads
 python3 $PWD/search/three_roads/dense_fulltext_sparse.py
 
-python3 /home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_zh/build/data_insert.py
+python3 /home/ubuntu/infinity/experiments/load_experiments/MLDR_zh/build/data_insert.py
 
 # ## tensor
 # ### two roads

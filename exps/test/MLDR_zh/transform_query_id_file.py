@@ -6,4 +6,4 @@ dataset = dataset.select_columns(["_id", "text"])
 # CSVPandas
 import pandas as pd
 df = dataset.to_pandas()
-df.to_csv("/home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_zh/queries_with_id.csv", index=False, encoding="utf-8")
+df.to_csv("/home/ubuntu/infinity/experiments/load_experiments/MLDR_zh/queries_with_id.csv", index=False, encoding="utf-8")

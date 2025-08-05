@@ -34,11 +34,11 @@ def load_colbert_list(multivec_save_file: str):
 
     return multivec_embeddings
 
-tensor_embedding_dir = '/home/ubuntu/large_disk/hybridsearch/mldr_zh/tensor_embeddings/vectors'
+tensor_embedding_dir = '/home/ubuntu/large_disk/infinity/mldr_zh/tensor_embeddings/vectors'
 tensor_names = [f for f in os.listdir(tensor_embedding_dir) if os.path.isfile(os.path.join(tensor_embedding_dir, f))]
 tensor_names = sorted(tensor_names, key=extract_number)
-# load_colbert_list("/home/ubuntu/large_disk/hybridsearch/mldr_zh/tensor_embeddings/vectors/.mldr_zh_bert265.fvecs.OMIqW3")
-load_colbert_list("/home/ubuntu/large_disk/hybridsearch/mldr_zh/tensor_embeddings/vectors/mldr_zh_bert265.fvecs")
+# load_colbert_list("/home/ubuntu/large_disk/infinity/mldr_zh/tensor_embeddings/vectors/.mldr_zh_bert265.fvecs.OMIqW3")
+load_colbert_list("/home/ubuntu/large_disk/infinity/mldr_zh/tensor_embeddings/vectors/mldr_zh_bert265.fvecs")
 print(len(tensor_names))
 tensor_names = tensor_names[250:]
 tensor_file_idx = 0

@@ -3,8 +3,8 @@ import time
 from DBPedia_en.search.vec_read import load_sparse
 from datasets import Dataset
 import pandas as pd
-import hybridsearch
-from hybridsearch.common import LOCAL_HOST
+import infinity
+from infinity.common import LOCAL_HOST
 
 #  CSV 
 # df = pd.read_csv('data.csv')
@@ -15,11 +15,11 @@ pd.options.display.max_rows = None
 # 
 pd.options.display.max_colwidth = None
 
- #  Use hybridsearch module to connect a remote server
-hybridsearch_instance = hybridsearch.connect(LOCAL_HOST)
-# hybridsearch_instance.drop_database("default_db2")
+ #  use infinity module to connect a remote server
+infinity_instance = infinity.connect(LOCAL_HOST)
+# infinity_instance.drop_database("default_db2")
 # 'default_db' is the default database
-db_instance = hybridsearch_instance.get_database("default_db")
+db_instance = infinity_instance.get_database("default_db")
 table = db_instance.get_table('DBPedia_en_Table')
 table.drop_index('DBPedia_en_tensor_index')
 print(db_instance.show_table('DBPedia_en_Table'))

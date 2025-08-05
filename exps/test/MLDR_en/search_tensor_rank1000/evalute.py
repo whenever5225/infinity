@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 qrel_file_path = "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/english/qrels/test.tsv"
-query_result_file_path = "/home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_en/search_tensor_rank1000/three_roads/fulltext_dense_sparse_result.txt"
+query_result_file_path = "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search_tensor_rank1000/three_roads/fulltext_dense_sparse_result.txt"
 
 def load_qrel_map():
     """

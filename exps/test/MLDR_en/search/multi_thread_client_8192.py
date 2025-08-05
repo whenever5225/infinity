@@ -1,8 +1,8 @@
 import threading
 import time
 import random
-import hybridsearch
-from hybridsearch.common import LOCAL_HOST
+import infinity
+from infinity.common import LOCAL_HOST
 # from MLDR_en.search.single_road.tensor_search_8192 import tensor_search
 # from single_road.dense_search import GetQuestions
 # from MLDR_en.search.two_roads.sparse_tensor_search_8192 import sparse_tensor_search
@@ -72,7 +72,7 @@ class MultiThreadClient:
         self.clients = list()
         self.begin_time = time.time()
         for _ in range(max_workers):
-            client = hybridsearch.connect(LOCAL_HOST)
+            client = infinity.connect(LOCAL_HOST)
             db_obj = client.get_database("default_db")
             table_obj = db_obj.get_table(table_name)
             self.clients.append(client)

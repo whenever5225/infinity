@@ -5,7 +5,7 @@ from tqdm import tqdm
 import datasets
 from dataclasses import dataclass, field
 from pyserini.output_writer import get_output_writer, OutputFormat
-from hybridsearch.common import SparseVector
+from infinity.common import SparseVector
 
 
 @dataclass

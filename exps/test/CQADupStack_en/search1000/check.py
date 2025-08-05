@@ -3,8 +3,8 @@ import time
 from CQADupStack_en.vec_read import load_sparse
 from datasets import Dataset
 import pandas as pd
-import hybridsearch
-from hybridsearch.common import LOCAL_HOST
+import infinity
+from infinity.common import LOCAL_HOST
 
 #  CSV 
 # df = pd.read_csv('data.csv')
@@ -15,24 +15,24 @@ pd.options.display.max_rows = None
 # 
 pd.options.display.max_colwidth = None
 
- #  Use hybridsearch module to connect a remote server
-hybridsearch_instance = hybridsearch.connect(LOCAL_HOST)
-# hybridsearch_instance.drop_database("default_db2")
+ #  use infinity module to connect a remote server
+infinity_instance = infinity.connect(LOCAL_HOST)
+# infinity_instance.drop_database("default_db2")
 # 'default_db' is the default database
-db_instance = hybridsearch_instance.get_database("default_db")
+db_instance = infinity_instance.get_database("default_db")
 table = db_instance.get_table('CQADupStack_en_Table')
 table.drop_index('CQADupStack_en_tensor_index')
 print(db_instance.show_table('CQADupStack_en_Table'))
 # print(db_instance.drop_table('CQADupStack_en_Table6'))
-# corpus = pd.read_csv('/home/ubuntu/hybridsearch/experiments/small_embedding/CQADupStack_en/english/CQADupStack_en_combine_corpus.csv')
+# corpus = pd.read_csv('/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/CQADupStack_en_combine_corpus.csv')
 # specific_id_list = ['102236','91901','177507','80798','112990','182056','130867']
 # for specific_id in specific_id_list:
 #     docid_list = corpus.query(f'_id == {specific_id}')
 #     print(docid_list['combine_text_and_title'].to_string(index=False))
 
-dense_embedding_dir = '/home/ubuntu/hybridsearch/experiments/small_embedding/CQADupStack_en/dense_embeddings/vectors'
+dense_embedding_dir = '/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/dense_embeddings/vectors'
 
-sparse_embedding_dir = '/home/ubuntu/hybridsearch/experiments/small_embedding/CQADupStack_en/sparse_embeddings/vectors'
+sparse_embedding_dir = '/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/sparse_embeddings/vectors'
 # sparse_names = [f for f in os.listdir(sparse_embedding_dir) if os.path.isfile(os.path.join(sparse_embedding_dir, f))]
 # print("Start inserting data...")
 # sparse_data = None

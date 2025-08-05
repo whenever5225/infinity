@@ -4,10 +4,10 @@ import re
 import time
 import os
 from tqdm import tqdm
-import hybridsearch
-from hybridsearch.common import ConflictType, LOCAL_HOST, SparseVector
-import hybridsearch.index as index
-from hybridsearch.errors import ErrorCode
+import infinity
+from infinity.common import ConflictType, LOCAL_HOST, SparseVector
+import infinity.index as index
+from infinity.errors import ErrorCode
 from vec_read import load_dense
 from vec_read import load_sparse
 from colbert_read import load_colbert_list
@@ -21,7 +21,7 @@ def extract_number(filename):
         return int(match.group(1))
     return 0
 
-class hybridsearchClientForInsert:
+class InfinityClientForInsert:
     def __init__(self):
         self.test_db_name = "default_db"
         self.test_table_name_prefix = "CQADupStack_en_Table"
@@ -29,30 +29,30 @@ class hybridsearchClientForInsert:
                                   "dense_col": {"type": "vector,1024,float"},
                                   "sparse_col": {"type": "sparse,250002,float,int"},
                                   "tensor_col": {"type": "tensor,96,float"}}
-        self.hybridsearch_obj = hybridsearch.connect(LOCAL_HOST)
-        self.hybridsearch_db = self.hybridsearch_obj.create_database(self.test_db_name, ConflictType.Ignore)
-        self.hybridsearch_table = None
+        self.infinity_obj = infinity.connect(LOCAL_HOST)
+        self.infinity_db = self.infinity_obj.create_database(self.test_db_name, ConflictType.Ignore)
+        self.infinity_table = None
 
     def create_test_table(self):
         table_name = self.test_table_name_prefix
-        self.hybridsearch_db.drop_table(table_name, ConflictType.Ignore)
-        self.hybridsearch_table = self.hybridsearch_db.create_table(table_name, self.test_table_schema)
+        self.infinity_db.drop_table(table_name, ConflictType.Ignore)
+        self.infinity_table = self.infinity_db.create_table(table_name, self.test_table_schema)
         print("Create table successfully.")
 
     def main(self):
         lang = 'en'
         self.create_test_table()
-        corpus = Dataset.from_csv('/home/ubuntu/hybridsearch/experiments/small_embedding/CQADupStack_en/english/CQADupStack_en_combine_corpus.csv')
+        corpus = Dataset.from_csv('/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/CQADupStack_en_combine_corpus.csv')
         total_num = corpus.num_rows
         docid_list = corpus["_id"]
         corpus_text_list = corpus["combine_text_and_title"]
         del corpus
         print(f"Expect total number of rows: {total_num}")
 
-        dense_embedding_dir = '/home/ubuntu/hybridsearch/experiments/small_embedding/CQADupStack_en/dense_embeddings/vectors'
+        dense_embedding_dir = '/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/dense_embeddings/vectors'
 
-        sparse_embedding_dir = '/home/ubuntu/hybridsearch/experiments/small_embedding/CQADupStack_en/sparse_embeddings/vectors'
-        tensor_embedding_dir = '/home/ubuntu/hybridsearch/experiments/small_embedding/CQADupStack_en/tensor_embeddings/vectors'
+        sparse_embedding_dir = '/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/sparse_embeddings/vectors'
+        tensor_embedding_dir = '/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/tensor_embeddings/vectors'
         dense_names = [f for f in os.listdir(dense_embedding_dir) if os.path.isfile(os.path.join(dense_embedding_dir, f))]
         sparse_names = [f for f in os.listdir(sparse_embedding_dir) if os.path.isfile(os.path.join(sparse_embedding_dir, f))]
         tensor_names = [f for f in os.listdir(tensor_embedding_dir) if os.path.isfile(os.path.join(tensor_embedding_dir, f))]
@@ -106,7 +106,7 @@ class hybridsearchClientForInsert:
                 tensor_idx += 1
                 buffer.append(insert_dict)
             while len(buffer) >= 8192:
-                self.hybridsearch_table.insert(buffer[:8192])
+                self.infinity_table.insert(buffer[:8192])
                 buffer = buffer[8192:]
             if dense_idx >= len(dense_vectors):
                 dense_idx = 0
@@ -118,7 +118,7 @@ class hybridsearchClientForInsert:
                 tensor_idx = 0
                 tensor_file_idx += 1
         if len(buffer) > 0:
-            self.hybridsearch_table.insert(buffer)
+            self.infinity_table.insert(buffer)
         end_insert_time = time.time()
         print("insert time: ",(end_insert_time - begin_insert_time)*1000,'ms')
 
@@ -129,5 +129,5 @@ class hybridsearchClientForInsert:
         del corpus_text_list
 
 if __name__ == "__main__":
-    hybridsearch_client = hybridsearchClientForInsert()
-    hybridsearch_client.main()
+    infinity_client = InfinityClientForInsert()
+    infinity_client.main()

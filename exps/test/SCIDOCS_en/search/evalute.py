@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-qrel_file_path = "/home/ubuntu/hybridsearch/experiments/load_experiments/SCIDOCS_en/qrels/test.tsv"
-query_result_file_path = "/home/ubuntu/hybridsearch/experiments/load_experiments/SCIDOCS_en/search/single_road/dense_result.txt"
+qrel_file_path = "/home/ubuntu/infinity/experiments/load_experiments/SCIDOCS_en/qrels/test.tsv"
+query_result_file_path = "/home/ubuntu/infinity/experiments/load_experiments/SCIDOCS_en/search/single_road/dense_result.txt"
 
 def load_qrel_map():
     """

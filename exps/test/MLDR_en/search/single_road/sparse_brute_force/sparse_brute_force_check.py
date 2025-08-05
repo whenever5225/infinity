@@ -8,7 +8,7 @@ import numpy as np
 
 def GetQuestions():
     sparse_embedding_dir = "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_sparse_embeddings/vectors"
-    df = pd.read_csv('/home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv')
+    df = pd.read_csv('/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv')
     sparse_names = [f for f in os.listdir(sparse_embedding_dir) if os.path.isfile(os.path.join(sparse_embedding_dir, f))]
     sparse_file_idx = 0
     questions = []
@@ -113,7 +113,7 @@ def main():
     sparse_data_vectors = GetSparseData()
     print("questions: ",len(questions))
     print("sparse_data_vectors: ",len(sparse_data_vectors))
-    with open('/home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_en/search/single_road/sparse_brute_force' + '/sparse_brute_force_result.txt','w') as result_file:
+    with open('/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/single_road/sparse_brute_force' + '/sparse_brute_force_result.txt','w') as result_file:
         result_file.write("query-id\tcorpus-id\n")
         nearest_results = search_nearest(questions, sparse_data_vectors, result_file, top_k=10)
 

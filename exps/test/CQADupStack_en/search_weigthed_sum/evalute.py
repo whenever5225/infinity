@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-qrel_file_path = "/home/ubuntu/hybridsearch/experiments/small_embedding/CQADupStack_en/english/qrels/test.tsv"
-query_result_file_path = "/home/ubuntu/hybridsearch/experiments/load_experiments/CQADupStack_en/search_weigthed_sum/three_roads/fulltext_dense_sparse_result.txt"
+qrel_file_path = "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/qrels/test.tsv"
+query_result_file_path = "/home/ubuntu/infinity/experiments/load_experiments/CQADupStack_en/search_weigthed_sum/three_roads/fulltext_dense_sparse_result.txt"
 
 def load_qrel_map():
     """

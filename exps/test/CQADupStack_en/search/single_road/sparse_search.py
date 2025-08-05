@@ -1,4 +1,4 @@
-# Copyright(C) 2023 HybridSearchFlow, Inc. All rights reserved.
+# Copyright(C) 2023 InfiniFlow, Inc. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,19 +13,19 @@
 # limitations under the License.
 
 """
-This example is to connect local hybridsearch instance, create table, insert data, search the data
+This example is to connect local infinity instance, create table, insert data, search the data
 """
 
-# import hybridsearch_embedded as hybridsearch
+# import infinity_embedded as infinity
 from multi_client import use_multi_client
 import os
 import re
 import time
 from CQADupStack_en.vec_read import load_sparse
-import hybridsearch
+import infinity
 import sys
-from hybridsearch.common import SparseVector
-from hybridsearch.common import LOCAL_HOST
+from infinity.common import SparseVector
+from infinity.common import LOCAL_HOST
 from numpy import float16
 import pandas as pd
 from utils import add_escape_characters
@@ -36,7 +36,7 @@ def extract_number(filename):
         return int(match.group(1))
     return 0
 
-path_prefix = "/home/ubuntu/hybridsearch/experiments/load_experiments/CQADupStack_en/search"
+path_prefix = "/home/ubuntu/infinity/experiments/load_experiments/CQADupStack_en/search"
 
 def remove_extremes_and_average(lst):
     """
@@ -63,11 +63,11 @@ def remove_extremes_and_average(lst):
     return sum(filtered) / len(filtered)
 
 cost_time = 0
-def sparse_search(hybridsearch_table, question):
+def sparse_search(infinity_table, question):
      global cost_time
      begin_time = time.time()
      res = (
-                hybridsearch_table.output(["docid_col","sparse_col"])
+                infinity_table.output(["docid_col","sparse_col"])
                 .match_sparse("sparse_col", question[0], "ip", 10)
                 # .to_pl()
             )
@@ -79,8 +79,8 @@ def sparse_search(hybridsearch_table, question):
      return qb_result, extra_result
 
 def GetQuestions():
-    sparse_embedding_dir = "/home/ubuntu/hybridsearch/experiments/small_embedding/CQADupStack_en/query_sparse_embeddings/vectors"
-    df = pd.read_csv('/home/ubuntu/hybridsearch/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv')
+    sparse_embedding_dir = "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_sparse_embeddings/vectors"
+    df = pd.read_csv('/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv')
     sparse_names = [f for f in os.listdir(sparse_embedding_dir) if os.path.isfile(os.path.join(sparse_embedding_dir, f))]
     sparse_names = sorted(sparse_names, key=extract_number)
     sparse_file_idx = 0
@@ -102,12 +102,12 @@ def GetQuestions():
 
 def single_search(questions):
     try:
-        #  Use hybridsearch module to connect a remote server
-        hybridsearch_instance = hybridsearch.connect(LOCAL_HOST)
+        #  use infinity module to connect a remote server
+        infinity_instance = infinity.connect(LOCAL_HOST)
 
         # 'default_db' is the default database
-        db_instance = hybridsearch_instance.get_database("default_db")
-        hybridsearch_table = db_instance.get_table("CQADupStack_en_Table")
+        db_instance = infinity_instance.get_database("default_db")
+        infinity_table = db_instance.get_table("CQADupStack_en_Table")
         with open(path_prefix + '/single_road/sparse_result.txt','w') as result_file:
             id = 0
             time_cost = 0
@@ -115,7 +115,7 @@ def single_search(questions):
             for question in questions:
                 id += 1
                 begin_time = time.time()
-                qb_result, extra_result = sparse_search(hybridsearch_table, question)
+                qb_result, extra_result = sparse_search(infinity_table, question)
                 end_time = time.time()
                 time_cost += (end_time - begin_time) * 1000
                 for i in range(len(qb_result['docid_col'])):
@@ -126,7 +126,7 @@ def single_search(questions):
             print("lastid: ",id)
             time_cost = time_cost / len(questions)
             print(f"time_cost: {time_cost} ms")
-        hybridsearch_instance.disconnect()
+        infinity_instance.disconnect()
         return time_cost
     except Exception as e:
         print(str(e))

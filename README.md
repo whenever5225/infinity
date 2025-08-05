@@ -2,7 +2,7 @@
 
 *Official Implementation for our paper submitted to VLDB 2026*
 
-[**Paper PDF**](paper.pdf) | [**Project Website**](https://github.com/infiniflow/infinity) | [**License: Apache 2.0**](#license)
+[**Paper PDF**](https://arxiv.org/pdf/2508.01405) | [**Project Website**](https://github.com/infiniflow/infinity) | [**License: Apache 2.0**](#license)
 
 ---
 
@@ -54,11 +54,11 @@ If you are on Windows 10+, you must enable WSL or WSL2 to deploy Infinity using 
 pip install infinity-sdk==0.6.0.dev4
 ```
 
-### 🔧 Deploy Infinity using binary
+### Deploy Infinity using binary
 
 If you wish to deploy Infinity using binary with the server and client as separate processes, see the [Deploy infinity using binary](https://infiniflow.org/docs/dev/deploy_infinity_server) guide.
 
-### 🔧 Build from Source
+### Build from Source
 
 See the [Build from Source](https://infiniflow.org/docs/dev/build_from_source) guide.
 
@@ -89,7 +89,7 @@ You can run experiments for specific types of architectures. The scripts are org
 - `three_road/`: Contains scripts to assess all four three-path retrieval combinations (e.g., FTS + DVS + SVS).
 - `four_road/`: Contains the script to evaluate the performance of the combined four-path approach.
 
-> **Note:** To run all retrieval combinations on a single dataset, navigate to the corresponding experiment directory and execute its `batch_search.sh` script. For example, to run all experiments for the `CQAD(en)` dataset:
+**Note:** To run all retrieval combinations on a single dataset, navigate to the corresponding experiment directory and execute its `batch_search.sh` script. For example, to run all experiments for the `CQAD(en)` dataset:
 ```bash
 cd exps/test/CQADupStack_en
 bash batch_search.sh
@@ -127,7 +127,7 @@ If you find this work useful for your research, please consider citing our paper
 @article{hybridsearch25-infinity,
   title={Balancing the Blend: An Experimental Analysis of Trade-offs in Hybrid Search},
   author={Wang, Mengzhao and Tan, Boyu and Gao, Yunjun and Jin, Hai and Zhang, Yingfeng and Ke, Xiangyu and Xu, Xiangliang and Zhu, Yifan},
-  journal={arXiv preprint arXiv:xxxx.xxxxx},
+  journal={arXiv preprint arXiv:2508.01405},
   year={2025}
 }
 ```
@@ -138,3 +138,7 @@ We welcome contributions from the community to improve and extend this benchmark
 ## 📄 License
 
 This project is licensed under the **Apache 2.0 License**. See the [LICENSE](./LICENSE) file for details.
+
+## 🙏 Acknowledgements
+
+The design and implementation of the evaluation framework in this repository were significantly informed by our work on the [Infinity](https://github.com/infiniflow/infinity) open-source database. We are grateful to our colleagues on the Infinity team for their foundational work and insightful discussions. A special thanks to **Zhichang Yu**, **Yushi Shen**, **Zhiqiang Yang**, **Ling Qin**, and **Yi Xiao** for their invaluable contributions to the Infinity project.

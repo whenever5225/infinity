@@ -7,7 +7,7 @@ import numpy as np
 
 def GetQuestions():
     tensor_embedding_dir = "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_tensor_embeddings/vectors"
-    df = pd.read_csv('/home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv')
+    df = pd.read_csv('/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv')
     tensor_names = [f for f in os.listdir(tensor_embedding_dir) if os.path.isfile(os.path.join(tensor_embedding_dir, f))]
     tensor_file_idx = 0
     questions = []
@@ -90,7 +90,7 @@ def main():
     print("questions: ",len(questions))
     tensor_data_vectors = GettensorData()
     print("tensor_data_vectors: ",len(tensor_data_vectors))
-    # with open('/home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_en/search/single_road/tensor_brute_force' + '/tensor_brute_force_result.txt','w') as result_file:
+    # with open('/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/single_road/tensor_brute_force' + '/tensor_brute_force_result.txt','w') as result_file:
     #     result_file.write("query-id\tcorpus-id\n")
     #     nearest_results = search_nearest(questions, tensor_data_vectors, result_file, top_k=10)
 

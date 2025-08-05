@@ -1,8 +1,8 @@
 import threading
 import time
 import random
-import hybridsearch
-from hybridsearch.common import LOCAL_HOST
+import infinity
+from infinity.common import LOCAL_HOST
 from single_road.tensor_search_9216 import tensor_search
 from single_road.tensor_search_9216 import GetQuestions as GetTensorQuestions
 
@@ -69,7 +69,7 @@ class MultiThreadClient:
         self.clients = list()
         self.begin_time = time.time()
         for _ in range(max_workers):
-            client = hybridsearch.connect(LOCAL_HOST)
+            client = infinity.connect(LOCAL_HOST)
             db_obj = client.get_database("default_db")
             table_obj = db_obj.get_table(table_name)
             self.clients.append(client)
@@ -100,7 +100,7 @@ class MultiThreadClient:
 
 def main():
     global process_func
-    with open("/home/ubuntu/hybridsearch/experiments/load_experiments/CQADupStack_en/search/multi_thread_9216_result.txt",'w') as multi_thread_file:
+    with open("/home/ubuntu/infinity/experiments/load_experiments/CQADupStack_en/search/multi_thread_9216_result.txt",'w') as multi_thread_file:
         for id in range(len(funcs)):
             process_func = funcs[id]
             QPS = []

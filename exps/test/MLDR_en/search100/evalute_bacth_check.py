@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 
-qrel_file_path = "/home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_en/search/qrels/test.tsv"
-# query_result_file_path = "/home/ubuntu/hybridsearch/experiments/load_experiments/CQADupStack_en/search1000/four_roads/fulltext_dense_sparse_tensor_result.txt"
-path_prefix = "/home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_en/search100/"
+qrel_file_path = "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/qrels/test.tsv"
+# query_result_file_path = "/home/ubuntu/infinity/experiments/load_experiments/CQADupStack_en/search1000/four_roads/fulltext_dense_sparse_tensor_result.txt"
+path_prefix = "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search100/"
 post_file_paths = [
     ## single_road
     # "single_road/sparse_result.txt","single_road/dense_result.txt","single_road/fulltext_result.txt","single_road/tensor_result.txt",

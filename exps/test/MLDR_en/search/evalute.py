@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-qrel_file_path = "/home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_en/search/qrels/test.tsv"
-query_result_file_path = "/home/ubuntu/hybridsearch/experiments/load_experiments/MLDR_en/search/two_roads/result/sparse_tensor_result.txt"
+qrel_file_path = "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/qrels/test.tsv"
+query_result_file_path = "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/two_roads/result/sparse_tensor_result.txt"
 
 def load_qrel_map():
     """

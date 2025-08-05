@@ -1,8 +1,8 @@
 import threading
 import time
 import random
-import hybridsearch
-from hybridsearch.common import LOCAL_HOST
+import infinity
+from infinity.common import LOCAL_HOST
 # from single_road.dense_search import dense_search
 # from single_road.dense_search import GetQuestions as GetDenseQuestions
 # from single_road.fulltext_search import fulltext_search
@@ -115,7 +115,7 @@ class MultiThreadClient:
         self.clients = list()
         self.begin_time = time.time()
         for _ in range(max_workers):
-            client = hybridsearch.connect(LOCAL_HOST)
+            client = infinity.connect(LOCAL_HOST)
             db_obj = client.get_database("default_db")
             table_obj = db_obj.get_table(table_name)
             self.clients.append(client)
@@ -146,7 +146,7 @@ class MultiThreadClient:
 
 def main():
     global process_func
-    with open("/home/ubuntu/hybridsearch/experiments/load_experiments/CQADupStack_en/search1000/multi_thread_result_temp.txt",'w') as multi_thread_file:
+    with open("/home/ubuntu/infinity/experiments/load_experiments/CQADupStack_en/search1000/multi_thread_result_temp.txt",'w') as multi_thread_file:
         for id in range(len(funcs)):
             process_func = funcs[id]
             QPS = []

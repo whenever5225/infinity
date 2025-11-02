@@ -1,0 +1,344 @@
+{
+  "name": "FiQA_2018_en",
+  "db_name": "default_db",
+  "table_name": "FiQA_2018_en_Table",
+  "schema": {
+    "docid": "varchar",
+    "text": "varchar",
+    "dense_vec": "vector,1024,float",
+    "sparse_vec": "sparse,250002,float,int",
+    "tensor_vec": "tensor,96,float"
+  },
+  "data": {
+    "corpus_path": "/home/ubuntu/data_download_data/data_download/dataset/FiQA-2018_en/fiqa/FiQA-2018_en_combine_corpus.csv",
+    "dense_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/FiQA-2018_en/dense_embeddings/vectors",
+    "sparse_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/FiQA-2018_en/sparse_embeddings/vectors",
+    "tensor_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/FiQA-2018_en/tensor_embeddings/vectors"
+  },
+  "indexes": [
+    {
+      "name": "fulltext_index",
+      "column": "text",
+      "type": "FullText",
+      "params": {
+        "ANALYZER": "en"
+      }
+    },
+    {
+      "name": "hnsw_index",
+      "column": "dense_vec",
+      "type": "Hnsw",
+      "params": {
+        "m": 16,
+        "ef_construction": 200,
+        "metric": "ip",
+        "encode": "lvq"
+      }
+    },
+    {
+      "name": "bmp_index",
+      "column": "sparse_vec",
+      "type": "BMP",
+      "params": {
+        "block_size": 8,
+        "compress_type": "compress"
+      },
+      "optimize": {
+        "topk": 1000
+      }
+    }
+  ],
+  "search_tasks": [
+    {
+      "name": "fulltext_search_k10",
+      "type": "fulltext",
+      "params": {
+        "column": "text",
+        "top_k": 10
+      },
+      "query_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/queries_with_id.csv",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/single_road/fulltext_result_k10.txt"
+    },
+    {
+      "name": "dense_search_k10",
+      "type": "dense",
+      "params": {
+        "column": "dense_vec",
+        "top_k": 10,
+        "metric": "ip",
+        "ef": 600
+      },
+      "query_file": "/home/ubuntu/data_download_data/embedding_reserve/FiQA-2018_en/query_dense_embeddings/vectors",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/single_road/dense_result_k10.txt"
+    },
+    {
+      "name": "sparse_search_k10",
+      "type": "sparse",
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 10,
+        "metric": "ip"
+      },
+      "query_file": "/home/ubuntu/data_download_data/embedding_reserve/FiQA-2018_en/query_sparse_embeddings/vectors",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/single_road/sparse_result_k10.txt"
+    },
+    {
+      "name": "hybrid_2_road_rrf_k10",
+      "type": "hybrid",
+      "params": {
+        "method": "rrf",
+        "top_k": 10,
+        "searches": [
+          {
+            "type": "fulltext",
+            "params": {
+              "column": "text",
+              "top_k": 10
+            }
+          },
+          {
+            "type": "dense",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 10,
+              "metric": "ip",
+              "ef": 600
+            }
+          }
+        ]
+      },
+      "query_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/queries_with_id.csv",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/two_roads/rrf_result_k10.txt"
+    },
+    {
+      "name": "hybrid_3_road_rrf_k10",
+      "type": "hybrid",
+      "params": {
+        "method": "rrf",
+        "top_k": 10,
+        "searches": [
+          {
+            "type": "fulltext",
+            "params": {
+              "column": "text",
+              "top_k": 10
+            }
+          },
+          {
+            "type": "dense",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 10,
+              "metric": "ip",
+              "ef": 600
+            }
+          },
+          {
+            "type": "sparse",
+            "params": {
+              "column": "sparse_vec",
+              "top_k": 10,
+              "metric": "ip"
+            }
+          }
+        ]
+      },
+      "query_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/queries_with_id.csv",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/three_roads/rrf_result_k10.txt"
+    },
+    {
+      "name": "fulltext_search_k100",
+      "type": "fulltext",
+      "params": {
+        "column": "text",
+        "top_k": 100
+      },
+      "query_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/queries_with_id.csv",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/single_road/fulltext_result_k100.txt"
+    },
+    {
+      "name": "dense_search_k100",
+      "type": "dense",
+      "params": {
+        "column": "dense_vec",
+        "top_k": 100,
+        "metric": "ip",
+        "ef": 600
+      },
+      "query_file": "/home/ubuntu/data_download_data/embedding_reserve/FiQA-2018_en/query_dense_embeddings/vectors",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/single_road/dense_result_k100.txt"
+    },
+    {
+      "name": "sparse_search_k100",
+      "type": "sparse",
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 100,
+        "metric": "ip"
+      },
+      "query_file": "/home/ubuntu/data_download_data/embedding_reserve/FiQA-2018_en/query_sparse_embeddings/vectors",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/single_road/sparse_result_k100.txt"
+    },
+    {
+      "name": "hybrid_2_road_rrf_k100",
+      "type": "hybrid",
+      "params": {
+        "method": "rrf",
+        "top_k": 100,
+        "searches": [
+          {
+            "type": "fulltext",
+            "params": {
+              "column": "text",
+              "top_k": 100
+            }
+          },
+          {
+            "type": "dense",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 100,
+              "metric": "ip",
+              "ef": 600
+            }
+          }
+        ]
+      },
+      "query_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/queries_with_id.csv",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/two_roads/rrf_result_k100.txt"
+    },
+    {
+      "name": "hybrid_3_road_rrf_k100",
+      "type": "hybrid",
+      "params": {
+        "method": "rrf",
+        "top_k": 100,
+        "searches": [
+          {
+            "type": "fulltext",
+            "params": {
+              "column": "text",
+              "top_k": 100
+            }
+          },
+          {
+            "type": "dense",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 100,
+              "metric": "ip",
+              "ef": 600
+            }
+          },
+          {
+            "type": "sparse",
+            "params": {
+              "column": "sparse_vec",
+              "top_k": 100,
+              "metric": "ip"
+            }
+          }
+        ]
+      },
+      "query_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/queries_with_id.csv",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/three_roads/rrf_result_k100.txt"
+    },
+    {
+      "name": "fulltext_search_k1000",
+      "type": "fulltext",
+      "params": {
+        "column": "text",
+        "top_k": 1000
+      },
+      "query_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/queries_with_id.csv",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/single_road/fulltext_result_k1000.txt"
+    },
+    {
+      "name": "dense_search_k1000",
+      "type": "dense",
+      "params": {
+        "column": "dense_vec",
+        "top_k": 1000,
+        "metric": "ip",
+        "ef": 600
+      },
+      "query_file": "/home/ubuntu/data_download_data/embedding_reserve/FiQA-2018_en/query_dense_embeddings/vectors",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/single_road/dense_result_k1000.txt"
+    },
+    {
+      "name": "sparse_search_k1000",
+      "type": "sparse",
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 1000,
+        "metric": "ip"
+      },
+      "query_file": "/home/ubuntu/data_download_data/embedding_reserve/FiQA-2018_en/query_sparse_embeddings/vectors",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/single_road/sparse_result_k1000.txt"
+    },
+    {
+      "name": "hybrid_2_road_rrf_k1000",
+      "type": "hybrid",
+      "params": {
+        "method": "rrf",
+        "top_k": 1000,
+        "searches": [
+          {
+            "type": "fulltext",
+            "params": {
+              "column": "text",
+              "top_k": 1000
+            }
+          },
+          {
+            "type": "dense",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 1000,
+              "metric": "ip",
+              "ef": 600
+            }
+          }
+        ]
+      },
+      "query_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/queries_with_id.csv",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/two_roads/rrf_result_k1000.txt"
+    },
+    {
+      "name": "hybrid_3_road_rrf_k1000",
+      "type": "hybrid",
+      "params": {
+        "method": "rrf",
+        "top_k": 1000,
+        "searches": [
+          {
+            "type": "fulltext",
+            "params": {
+              "column": "text",
+              "top_k": 1000
+            }
+          },
+          {
+            "type": "dense",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 1000,
+              "metric": "ip",
+              "ef": 600
+            }
+          },
+          {
+            "type": "sparse",
+            "params": {
+              "column": "sparse_vec",
+              "top_k": 1000,
+              "metric": "ip"
+            }
+          }
+        ]
+      },
+      "query_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/queries_with_id.csv",
+      "output_file": "/home/ubuntu/infinity/experiments/load_experiments/FiQA_2018_en/search/three_roads/rrf_result_k1000.txt"
+    }
+  ]
+}

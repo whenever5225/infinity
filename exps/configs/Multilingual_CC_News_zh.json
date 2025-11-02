@@ -1,0 +1,332 @@
+{
+  "name": "Multilingual_CC_News_zh",
+  "db_name": "default_db",
+  "table_name": "Multilingual_CC_News_zh_Table",
+  "schema": {
+    "docid": "varchar",
+    "text": "varchar",
+    "dense_vec": "vector,1024,float",
+    "sparse_vec": "sparse,250002,float,int",
+    "tensor_vec": "tensor,64,float"
+  },
+  "data": {
+    "corpus_path": "/home/ubuntu/data_download_data/data_download/dataset/Multilingual_CC-News_zh/Multilingual_CC-News_zh_corpus.csv",
+    "dense_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/Multilingual_CC_News_zh/dense_embeddings/vectors",
+    "sparse_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/Multilingual_CC_News_zh/sparse_embeddings/vectors",
+    "tensor_embeddings_dir": "/home/ubuntu/large_disk/infinity/Multilingual_CC_News_zh/tensor_embeddings/vectors"
+  },
+  "indexes": [
+    {
+      "name": "fulltext_index",
+      "column": "text",
+      "type": "FullText",
+      "params": {
+        "ANALYZER": "ik"
+      }
+    },
+    {
+      "name": "hnsw_index",
+      "column": "dense_vec",
+      "type": "Hnsw",
+      "params": {
+        "m": 16,
+        "ef_construction": 200,
+        "metric": "ip",
+        "encode": "lvq"
+      }
+    },
+    {
+      "name": "bmp_index",
+      "column": "sparse_vec",
+      "type": "BMP",
+      "params": {
+        "block_size": 8,
+        "compress_type": "compress"
+      },
+      "optimize": {
+        "topk": 1000
+      }
+    }
+  ],
+  "search_tasks": [
+    {
+      "name": "fulltext_search_10",
+      "type": "fulltext",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search10/fulltext_result.txt",
+      "params": {
+        "column": "text",
+        "top_k": 10
+      }
+    },
+    {
+      "name": "dense_search_10",
+      "type": "dense",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/Multilingual_CC_News_zh/query_dense_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search10/dense_result.txt",
+      "params": {
+        "column": "dense_vec",
+        "metric": "ip",
+        "top_k": 10,
+        "extra_params": {
+          "ef": 600
+        }
+      }
+    },
+    {
+      "name": "sparse_search_10",
+      "type": "sparse",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/Multilingual_CC_News_zh/query_sparse_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search10/sparse_result.txt",
+      "params": {
+        "column": "sparse_vec",
+        "metric": "ip",
+        "top_k": 10
+      }
+    },
+    {
+      "name": "hybrid_search_2_road_10",
+      "type": "hybrid",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search10/hybrid_2_road_result.txt",
+      "params": {
+        "fusion_method": "rrf",
+        "top_k": 10,
+        "searches": [
+          {
+            "type": "fulltext",
+            "column": "text",
+            "top_k": 10
+          },
+          {
+            "type": "dense",
+            "column": "dense_vec",
+            "metric": "ip",
+            "top_k": 10,
+            "extra_params": {
+              "ef": 600
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "hybrid_search_3_road_10",
+      "type": "hybrid",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search10/hybrid_3_road_result.txt",
+      "params": {
+        "fusion_method": "rrf",
+        "top_k": 10,
+        "searches": [
+          {
+            "type": "fulltext",
+            "column": "text",
+            "top_k": 10
+          },
+          {
+            "type": "dense",
+            "column": "dense_vec",
+            "metric": "ip",
+            "top_k": 10,
+            "extra_params": {
+              "ef": 600
+            }
+          },
+          {
+            "type": "sparse",
+            "column": "sparse_vec",
+            "metric": "ip",
+            "top_k": 10
+          }
+        ]
+      }
+    },
+    {
+      "name": "fulltext_search_100",
+      "type": "fulltext",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search100/fulltext_result.txt",
+      "params": {
+        "column": "text",
+        "top_k": 100
+      }
+    },
+    {
+      "name": "dense_search_100",
+      "type": "dense",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/Multilingual_CC_News_zh/query_dense_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search100/dense_result.txt",
+      "params": {
+        "column": "dense_vec",
+        "metric": "ip",
+        "top_k": 100,
+        "extra_params": {
+          "ef": 600
+        }
+      }
+    },
+    {
+      "name": "sparse_search_100",
+      "type": "sparse",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/Multilingual_CC_News_zh/query_sparse_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search100/sparse_result.txt",
+      "params": {
+        "column": "sparse_vec",
+        "metric": "ip",
+        "top_k": 100
+      }
+    },
+    {
+      "name": "hybrid_search_2_road_100",
+      "type": "hybrid",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search100/hybrid_2_road_result.txt",
+      "params": {
+        "fusion_method": "rrf",
+        "top_k": 100,
+        "searches": [
+          {
+            "type": "fulltext",
+            "column": "text",
+            "top_k": 100
+          },
+          {
+            "type": "dense",
+            "column": "dense_vec",
+            "metric": "ip",
+            "top_k": 100,
+            "extra_params": {
+              "ef": 600
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "hybrid_search_3_road_100",
+      "type": "hybrid",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search100/hybrid_3_road_result.txt",
+      "params": {
+        "fusion_method": "rrf",
+        "top_k": 100,
+        "searches": [
+          {
+            "type": "fulltext",
+            "column": "text",
+            "top_k": 100
+          },
+          {
+            "type": "dense",
+            "column": "dense_vec",
+            "metric": "ip",
+            "top_k": 100,
+            "extra_params": {
+              "ef": 600
+            }
+          },
+          {
+            "type": "sparse",
+            "column": "sparse_vec",
+            "metric": "ip",
+            "top_k": 100
+          }
+        ]
+      }
+    },
+    {
+      "name": "fulltext_search_1000",
+      "type": "fulltext",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search1000/fulltext_result.txt",
+      "params": {
+        "column": "text",
+        "top_k": 1000
+      }
+    },
+    {
+      "name": "dense_search_1000",
+      "type": "dense",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/Multilingual_CC_News_zh/query_dense_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search1000/dense_result.txt",
+      "params": {
+        "column": "dense_vec",
+        "metric": "ip",
+        "top_k": 1000,
+        "extra_params": {
+          "ef": 600
+        }
+      }
+    },
+    {
+      "name": "sparse_search_1000",
+      "type": "sparse",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/Multilingual_CC_News_zh/query_sparse_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search1000/sparse_result.txt",
+      "params": {
+        "column": "sparse_vec",
+        "metric": "ip",
+        "top_k": 1000
+      }
+    },
+    {
+      "name": "hybrid_search_2_road_1000",
+      "type": "hybrid",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search1000/hybrid_2_road_result.txt",
+      "params": {
+        "fusion_method": "rrf",
+        "top_k": 1000,
+        "searches": [
+          {
+            "type": "fulltext",
+            "column": "text",
+            "top_k": 1000
+          },
+          {
+            "type": "dense",
+            "column": "dense_vec",
+            "metric": "ip",
+            "top_k": 1000,
+            "extra_params": {
+              "ef": 600
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "hybrid_search_3_road_1000",
+      "type": "hybrid",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/Multilingual_CC_News_zh/search/search1000/hybrid_3_road_result.txt",
+      "params": {
+        "fusion_method": "rrf",
+        "top_k": 1000,
+        "searches": [
+          {
+            "type": "fulltext",
+            "column": "text",
+            "top_k": 1000
+          },
+          {
+            "type": "dense",
+            "column": "dense_vec",
+            "metric": "ip",
+            "top_k": 1000,
+            "extra_params": {
+              "ef": 600
+            }
+          },
+          {
+            "type": "sparse",
+            "column": "sparse_vec",
+            "metric": "ip",
+            "top_k": 1000
+          }
+        ]
+      }
+    }
+  ]
+}

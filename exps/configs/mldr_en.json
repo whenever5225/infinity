@@ -1,0 +1,347 @@
+{
+  "name": "mldr_en",
+  "db_name": "default_db",
+  "table_name": "mldr_en_table",
+  "schema": {
+    "docid": "varchar",
+    "text": "varchar",
+    "dense_vec": "vector,1024,float",
+    "sparse_vec": "sparse,250002,float,int",
+    "tensor_vec": "tensor,96,float"
+  },
+  "data": {
+    "corpus_path": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/mldr_en_corpus.csv",
+    "dense_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/dense_embeddings/vectors",
+    "sparse_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/sparse_embedding/vectors",
+    "tensor_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/tensor_embeddings/vectors"
+  },
+  "indexes": [
+    {
+      "name": "fulltext_index",
+      "column": "text",
+      "type": "FullText",
+      "params": {}
+    },
+    {
+      "name": "hnsw_index",
+      "column": "dense_vec",
+      "type": "Hnsw",
+      "params": {
+        "m": 16,
+        "ef_construction": 200,
+        "metric": "ip",
+        "encode": "lvq"
+      }
+    },
+    {
+      "name": "bmp_index",
+      "column": "sparse_vec",
+      "type": "BMP",
+      "params": {
+        "block_size": 8,
+        "compress_type": "compress"
+      },
+      "optimize": {
+        "topk": 1000
+      }
+    },
+    {
+      "name": "emvb_index",
+      "column": "tensor_vec",
+      "type": "EMVB",
+      "params": {
+        "pq_subspace_num": 32,
+        "pq_subspace_bits": 8
+      }
+    }
+  ],
+  "evaluation": {
+    "qrels_file": "hs_bench/datasets/mldr/mldr_en_qrels.tsv",
+    "output_summary_file": "exps/results/mldr_en_evaluation_summary.csv"
+  },
+  "search_tasks": [
+    {
+      "name": "fulltext_k10",
+      "output_file": "results/fulltext_k10.trec",
+      "searches": [
+        {
+          "column": "text",
+          "query_file": "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv",
+          "top_k": 10,
+          "type": "fulltext"
+        }
+      ],
+      "type": "single"
+    },
+    {
+      "name": "dense_k10",
+      "output_file": "results/dense_k10.trec",
+      "searches": [
+        {
+          "column": "dense_vec",
+          "params": {
+            "ef": 600
+          },
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_dense_embeddings/vectors",
+          "top_k": 10,
+          "type": "dense"
+        }
+      ],
+      "type": "single"
+    },
+    {
+      "name": "sparse_k10",
+      "output_file": "results/sparse_k10.trec",
+      "searches": [
+        {
+          "column": "sparse_vec",
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_sparse_embeddings/vectors",
+          "top_k": 10,
+          "type": "sparse"
+        }
+      ],
+      "type": "single"
+    },
+    {
+      "name": "tensor_k10",
+      "output_file": "results/tensor_k10.trec",
+      "searches": [
+        {
+          "column": "tensor_vec",
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_tensor_embeddings/vectors",
+          "top_k": 10,
+          "type": "tensor"
+        }
+      ],
+      "type": "single"
+    },
+    {
+      "name": "rrf_2_roads_fulltext_dense_k10",
+      "output_file": "results/rrf_2_roads_fulltext_dense_k10.trec",
+      "fusion": {
+        "method": "rrf",
+        "top_n": 10
+      },
+      "searches": [
+        {
+          "column": "text",
+          "query_file": "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv",
+          "top_k": 10,
+          "type": "fulltext"
+        },
+        {
+          "column": "dense_vec",
+          "params": {
+            "ef": 600
+          },
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_dense_embeddings/vectors",
+          "top_k": 10,
+          "type": "dense"
+        }
+      ],
+      "type": "hybrid"
+    },
+    {
+      "name": "rrf_3_roads_fulltext_dense_sparse_k10",
+      "output_file": "results/rrf_3_roads_fulltext_dense_sparse_k10.trec",
+      "fusion": {
+        "method": "rrf",
+        "top_n": 10
+      },
+      "searches": [
+        {
+          "column": "text",
+          "query_file": "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv",
+          "top_k": 10,
+          "type": "fulltext"
+        },
+        {
+          "column": "dense_vec",
+          "params": {
+            "ef": 600
+          },
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_dense_embeddings/vectors",
+          "top_k": 10,
+          "type": "dense"
+        },
+        {
+          "column": "sparse_vec",
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_sparse_embeddings/vectors",
+          "top_k": 10,
+          "type": "sparse"
+        }
+      ],
+      "type": "hybrid"
+    },
+    {
+      "name": "rrf_4_roads_fulltext_dense_sparse_tensor_k10",
+      "output_file": "results/rrf_4_roads_fulltext_dense_sparse_tensor_k10.trec",
+      "fusion": {
+        "method": "rrf",
+        "top_n": 10
+      },
+      "searches": [
+        {
+          "column": "text",
+          "query_file": "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv",
+          "top_k": 10,
+          "type": "fulltext"
+        },
+        {
+          "column": "dense_vec",
+          "params": {
+            "ef": 600
+          },
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_dense_embeddings/vectors",
+          "top_k": 10,
+          "type": "dense"
+        },
+        {
+          "column": "sparse_vec",
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_sparse_embeddings/vectors",
+          "top_k": 10,
+          "type": "sparse"
+        },
+        {
+          "column": "tensor_vec",
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_tensor_embeddings/vectors",
+          "top_k": 10,
+          "type": "tensor"
+        }
+      ],
+      "type": "hybrid"
+    },
+    {
+      "name": "weighted_sum_2_roads_fulltext_dense_k10",
+      "output_file": "results/weighted_sum_2_roads_fulltext_dense_k10.trec",
+      "fusion": {
+        "method": "weighted_sum",
+        "params": {
+          "weights": "6,5"
+        },
+        "top_n": 10
+      },
+      "searches": [
+        {
+          "column": "text",
+          "query_file": "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv",
+          "top_k": 10,
+          "type": "fulltext"
+        },
+        {
+          "column": "dense_vec",
+          "params": {
+            "ef": 600
+          },
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_dense_embeddings/vectors",
+          "top_k": 10,
+          "type": "dense"
+        }
+      ],
+      "type": "hybrid"
+    },
+    {
+      "name": "weighted_sum_3_roads_fulltext_dense_sparse_k10",
+      "output_file": "results/weighted_sum_3_roads_fulltext_dense_sparse_k10.trec",
+      "fusion": {
+        "method": "weighted_sum",
+        "params": {
+          "weights": "6,5,6"
+        },
+        "top_n": 10
+      },
+      "searches": [
+        {
+          "column": "text",
+          "query_file": "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv",
+          "top_k": 10,
+          "type": "fulltext"
+        },
+        {
+          "column": "dense_vec",
+          "params": {
+            "ef": 600
+          },
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_dense_embeddings/vectors",
+          "top_k": 10,
+          "type": "dense"
+        },
+        {
+          "column": "sparse_vec",
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_sparse_embeddings/vectors",
+          "top_k": 10,
+          "type": "sparse"
+        }
+      ],
+      "type": "hybrid"
+    },
+    {
+      "name": "match_tensor_2_roads_fulltext_dense_k10",
+      "output_file": "results/match_tensor_2_roads_fulltext_dense_k10.trec",
+      "fusion": {
+        "method": "match_tensor",
+        "params": {
+          "element_type": "float",
+          "field": "tensor_vec",
+          "query_tensor_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_tensor_embeddings/vectors"
+        },
+        "top_n": 10
+      },
+      "searches": [
+        {
+          "column": "text",
+          "query_file": "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv",
+          "top_k": 10,
+          "type": "fulltext"
+        },
+        {
+          "column": "dense_vec",
+          "params": {
+            "ef": 600
+          },
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_dense_embeddings/vectors",
+          "top_k": 10,
+          "type": "dense"
+        }
+      ],
+      "type": "hybrid"
+    },
+    {
+      "name": "match_tensor_3_roads_fulltext_dense_sparse_k10",
+      "output_file": "results/match_tensor_3_roads_fulltext_dense_sparse_k10.trec",
+      "fusion": {
+        "method": "match_tensor",
+        "params": {
+          "element_type": "float",
+          "field": "tensor_vec",
+          "query_tensor_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_tensor_embeddings/vectors"
+        },
+        "top_n": 10
+      },
+      "searches": [
+        {
+          "column": "text",
+          "query_file": "/home/ubuntu/infinity/experiments/load_experiments/MLDR_en/search/queries_decline_with_id.csv",
+          "top_k": 10,
+          "type": "fulltext"
+        },
+        {
+          "column": "dense_vec",
+          "params": {
+            "ef": 600
+          },
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_dense_embeddings/vectors",
+          "top_k": 10,
+          "type": "dense"
+        },
+        {
+          "column": "sparse_vec",
+          "query_file": "/home/ubuntu/data_download_data/embedding_reserve/mldr_en/query_sparse_embeddings/vectors",
+          "top_k": 10,
+          "type": "sparse"
+        }
+      ],
+      "type": "hybrid"
+    }
+  ]
+}

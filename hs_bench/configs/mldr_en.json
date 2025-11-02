@@ -1,0 +1,59 @@
+{
+    "dataset": {
+        "name": "mldr_en",
+        "corpus_path": "hs_bench/datasets/mldr_en/corpus.jsonl",
+        "queries_path": "hs_bench/datasets/mldr_en/queries.tsv",
+        "qrels_path": "hs_bench/datasets/mldr_en/qrels.tsv",
+        "corpus_embeddings_dir": "hs_bench/embedding/embeddings/mldr_en/corpus",
+        "queries_embeddings_dir": "hs_bench/embedding/embeddings/mldr_en/queries"
+    },
+    "database": {
+        "name": "mldr_en_db",
+        "table_name": "docs"
+    },
+    "embedding_models": [
+        {
+            "name": "bge-m3",
+            "type": "huggingface",
+            "storage_type": "dense",
+            "dim": 1024,
+            "params": {
+                "model_name": "BAAI/bge-m3"
+            }
+        },
+        {
+            "name": "bge-m3-sparse",
+            "type": "huggingface",
+            "storage_type": "sparse",
+            "dim": 250002,
+            "params": {
+                "model_name": "BAAI/bge-m3"
+            }
+        },
+        {
+            "name": "colbert-small-v1",
+            "type": "huggingface",
+            "storage_type": "tensor",
+            "dim": 96,
+            "params": {
+                "model_name": "answerdotai/answerai-colbert-small-v1"
+            }
+        }
+    ],
+      "index_params": {
+    "hnsw": {
+      "metric": "ip",
+      "M": 16,
+      "ef_construction": 200,
+      "encode": "lvq"
+    },
+    "bmp": {
+      "block_size": 8,
+      "compress_type": "compress"
+    },
+    "emvb": {
+      "pq_subspace_num": 32,
+      "pq_subspace_bits": 8
+    }
+  }
+}

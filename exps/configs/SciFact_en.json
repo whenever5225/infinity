@@ -1,0 +1,360 @@
+{
+  "name": "SciFact_en",
+  "db_name": "default_db",
+  "table_name": "SciFact_en_Table",
+  "schema": {
+    "docid": "varchar",
+    "text": "varchar",
+    "dense_vec": "vector,1024,float",
+    "sparse_vec": "sparse,250002,float,int",
+    "tensor_vec": "tensor,96,float"
+  },
+  "data": {
+    "corpus_path": "/home/ubuntu/data_download_data/data_download/dataset/SciFact_en/scifact/SciFact_en_combine_corpus.csv",
+    "dense_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/SciFact_en/dense_embeddings/vectors",
+    "sparse_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/SciFact_en/sparse_embeddings/vectors",
+    "tensor_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/SciFact_en/tensor_embeddings/vectors"
+  },
+  "indexes": [
+    {
+      "name": "fulltext_index",
+      "column": "text",
+      "type": "FullText",
+      "params": {}
+    },
+    {
+      "name": "hnsw_index",
+      "column": "dense_vec",
+      "type": "Hnsw",
+      "params": {
+        "m": 16,
+        "ef_construction": 200,
+        "metric": "ip",
+        "encode": "lvq"
+      }
+    },
+    {
+      "name": "bmp_index",
+      "column": "sparse_vec",
+      "type": "BMP",
+      "params": {
+        "block_size": 8,
+        "compress_type": "compress"
+      },
+      "optimize": {
+        "topk": 1000
+      }
+    }
+  ],
+  "search_tasks": [
+    {
+      "name": "fulltext_search_10",
+      "type": "fulltext",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/single_road/fulltext_result_10.txt",
+      "params": {
+        "column": "text",
+        "top_k": 10
+      }
+    },
+    {
+      "name": "fulltext_search_100",
+      "type": "fulltext",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/single_road/fulltext_result_100.txt",
+      "params": {
+        "column": "text",
+        "top_k": 100
+      }
+    },
+    {
+      "name": "fulltext_search_1000",
+      "type": "fulltext",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/single_road/fulltext_result_1000.txt",
+      "params": {
+        "column": "text",
+        "top_k": 1000
+      }
+    },
+    {
+      "name": "dense_search_10",
+      "type": "dense",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/SciFact_en/query_dense_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/single_road/dense_result_10.txt",
+      "params": {
+        "column": "dense_vec",
+        "top_k": 10,
+        "metric": "ip",
+        "extra_params": {
+          "ef": 600
+        }
+      }
+    },
+    {
+      "name": "dense_search_100",
+      "type": "dense",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/SciFact_en/query_dense_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/single_road/dense_result_100.txt",
+      "params": {
+        "column": "dense_vec",
+        "top_k": 100,
+        "metric": "ip",
+        "extra_params": {
+          "ef": 600
+        }
+      }
+    },
+    {
+      "name": "dense_search_1000",
+      "type": "dense",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/SciFact_en/query_dense_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/single_road/dense_result_1000.txt",
+      "params": {
+        "column": "dense_vec",
+        "top_k": 1000,
+        "metric": "ip",
+        "extra_params": {
+          "ef": 600
+        }
+      }
+    },
+    {
+      "name": "sparse_search_10",
+      "type": "sparse",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/SciFact_en/query_sparse_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/single_road/sparse_result_10.txt",
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 10,
+        "metric": "ip"
+      }
+    },
+    {
+      "name": "sparse_search_100",
+      "type": "sparse",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/SciFact_en/query_sparse_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/single_road/sparse_result_100.txt",
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 100,
+        "metric": "ip"
+      }
+    },
+    {
+      "name": "sparse_search_1000",
+      "type": "sparse",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/SciFact_en/query_sparse_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/single_road/sparse_result_1000.txt",
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 1000,
+        "metric": "ip"
+      }
+    },
+    {
+      "name": "hybrid_search_2_road_10",
+      "type": "hybrid",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/two_roads/hybrid_result_10.txt",
+      "params": {
+        "method": "rrf",
+        "top_k": 10,
+        "sub_tasks": [
+          {
+            "type": "fulltext",
+            "params": {
+              "column": "text",
+              "top_k": 10
+            }
+          },
+          {
+            "type": "dense",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 10,
+              "metric": "ip",
+              "extra_params": {
+                "ef": 600
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "hybrid_search_2_road_100",
+      "type": "hybrid",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/two_roads/hybrid_result_100.txt",
+      "params": {
+        "method": "rrf",
+        "top_k": 100,
+        "sub_tasks": [
+          {
+            "type": "fulltext",
+            "params": {
+              "column": "text",
+              "top_k": 100
+            }
+          },
+          {
+            "type": "dense",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 100,
+              "metric": "ip",
+              "extra_params": {
+                "ef": 600
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "hybrid_search_2_road_1000",
+      "type": "hybrid",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/two_roads/hybrid_result_1000.txt",
+      "params": {
+        "method": "rrf",
+        "top_k": 1000,
+        "sub_tasks": [
+          {
+            "type": "fulltext",
+            "params": {
+              "column": "text",
+              "top_k": 1000
+            }
+          },
+          {
+            "type": "dense",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 1000,
+              "metric": "ip",
+              "extra_params": {
+                "ef": 600
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "hybrid_search_3_road_10",
+      "type": "hybrid",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/three_roads/hybrid_result_10.txt",
+      "params": {
+        "method": "rrf",
+        "top_k": 10,
+        "sub_tasks": [
+          {
+            "type": "fulltext",
+            "params": {
+              "column": "text",
+              "top_k": 10
+            }
+          },
+          {
+            "type": "dense",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 10,
+              "metric": "ip",
+              "extra_params": {
+                "ef": 600
+              }
+            }
+          },
+          {
+            "type": "sparse",
+            "params": {
+              "column": "sparse_vec",
+              "top_k": 10,
+              "metric": "ip"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "hybrid_search_3_road_100",
+      "type": "hybrid",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/three_roads/hybrid_result_100.txt",
+      "params": {
+        "method": "rrf",
+        "top_k": 100,
+        "sub_tasks": [
+          {
+            "type": "fulltext",
+            "params": {
+              "column": "text",
+              "top_k": 100
+            }
+          },
+          {
+            "type": "dense",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 100,
+              "metric": "ip",
+              "extra_params": {
+                "ef": 600
+              }
+            }
+          },
+          {
+            "type": "sparse",
+            "params": {
+              "column": "sparse_vec",
+              "top_k": 100,
+              "metric": "ip"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "hybrid_search_3_road_1000",
+      "type": "hybrid",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/SciFact_en/search/three_roads/hybrid_result_1000.txt",
+      "params": {
+        "method": "rrf",
+        "top_k": 1000,
+        "sub_tasks": [
+          {
+            "type": "fulltext",
+            "params": {
+              "column": "text",
+              "top_k": 1000
+            }
+          },
+          {
+            "type": "dense",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 1000,
+              "metric": "ip",
+              "extra_params": {
+                "ef": 600
+              }
+            }
+          },
+          {
+            "type": "sparse",
+            "params": {
+              "column": "sparse_vec",
+              "top_k": 1000,
+              "metric": "ip"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

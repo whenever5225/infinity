@@ -1,0 +1,258 @@
+{
+  "name": "DBPedia_en",
+  "db_name": "default_db",
+  "table_name": "DBPedia_en_Table",
+  "schema": {
+    "docid": "varchar",
+    "text": "varchar",
+    "dense_vec": "vector,1024,float",
+    "sparse_vec": "sparse,250002,float,int",
+    "tensor_vec": "tensor,96,float"
+  },
+  "data": {
+    "corpus_path": "/home/ubuntu/data_download_data/embedding_reserve/DBPedia_en/DBPedia_en_combine_corpus.csv",
+    "dense_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/DBPedia_en/dense_embeddings/vectors",
+    "sparse_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/DBPedia_en/sparse_embeddings/vectors",
+    "tensor_embeddings_dir": "/home/ubuntu/large_disk/infinity/DBPedia_en/tensor_embeddings/vectors"
+  },
+  "indexes": [
+    {
+      "name": "fulltext_index",
+      "column": "text",
+      "type": "FullText",
+      "params": {}
+    },
+    {
+      "name": "hnsw_index",
+      "column": "dense_vec",
+      "type": "Hnsw",
+      "params": {
+        "m": 16,
+        "ef_construction": 200,
+        "metric": "ip",
+        "encode": "lvq"
+      }
+    },
+    {
+      "name": "bmp_index",
+      "column": "sparse_vec",
+      "type": "BMP",
+      "params": {
+        "block_size": 8,
+        "compress_type": "compress"
+      },
+      "optimize": {
+        "topk": 1000
+      }
+    }
+  ],
+  "search_tasks": [
+    {
+      "name": "fulltext_search_k10",
+      "type": "match_text",
+      "queries": {
+        "file": "/home/ubuntu/infinity/experiments/load_experiments/DBPedia_en/queries_with_id.csv",
+        "column": "text"
+      },
+      "params": {
+        "column": "text",
+        "top_k": 10
+      },
+      "output_file": "fulltext_result_k10.txt"
+    },
+    {
+      "name": "dense_search_k10",
+      "type": "match_dense",
+      "queries": {
+        "file": "/home/ubuntu/data_download_data/embedding_reserve/DBPedia_en/query_dense_embeddings/vectors"
+      },
+      "params": {
+        "column": "dense_vec",
+        "top_k": 10,
+        "metric": "ip",
+        "extra_params": {
+          "ef": 600
+        }
+      },
+      "output_file": "dense_result_k10.txt"
+    },
+    {
+      "name": "sparse_search_k10",
+      "type": "match_sparse",
+      "queries": {
+        "file": "/home/ubuntu/data_download_data/embedding_reserve/DBPedia_en/query_sparse_embeddings/vectors"
+      },
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 10,
+        "metric": "ip"
+      },
+      "output_file": "sparse_result_k10.txt"
+    },
+    {
+      "name": "hybrid_2_road_rrf_k10",
+      "type": "fusion",
+      "searches": [
+        "fulltext_search_k10",
+        "dense_search_k10"
+      ],
+      "params": {
+        "method": "rrf",
+        "top_k": 10
+      },
+      "output_file": "hybrid_2_road_rrf_k10.txt"
+    },
+    {
+      "name": "hybrid_3_road_rrf_k10",
+      "type": "fusion",
+      "searches": [
+        "fulltext_search_k10",
+        "dense_search_k10",
+        "sparse_search_k10"
+      ],
+      "params": {
+        "method": "rrf",
+        "top_k": 10
+      },
+      "output_file": "hybrid_3_road_rrf_k10.txt"
+    },
+    {
+      "name": "fulltext_search_k100",
+      "type": "match_text",
+      "queries": {
+        "file": "/home/ubuntu/infinity/experiments/load_experiments/DBPedia_en/queries_with_id.csv",
+        "column": "text"
+      },
+      "params": {
+        "column": "text",
+        "top_k": 100
+      },
+      "output_file": "fulltext_result_k100.txt"
+    },
+    {
+      "name": "dense_search_k100",
+      "type": "match_dense",
+      "queries": {
+        "file": "/home/ubuntu/data_download_data/embedding_reserve/DBPedia_en/query_dense_embeddings/vectors"
+      },
+      "params": {
+        "column": "dense_vec",
+        "top_k": 100,
+        "metric": "ip",
+        "extra_params": {
+          "ef": 600
+        }
+      },
+      "output_file": "dense_result_k100.txt"
+    },
+    {
+      "name": "sparse_search_k100",
+      "type": "match_sparse",
+      "queries": {
+        "file": "/home/ubuntu/data_download_data/embedding_reserve/DBPedia_en/query_sparse_embeddings/vectors"
+      },
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 100,
+        "metric": "ip"
+      },
+      "output_file": "sparse_result_k100.txt"
+    },
+    {
+      "name": "hybrid_2_road_rrf_k100",
+      "type": "fusion",
+      "searches": [
+        "fulltext_search_k100",
+        "dense_search_k100"
+      ],
+      "params": {
+        "method": "rrf",
+        "top_k": 100
+      },
+      "output_file": "hybrid_2_road_rrf_k100.txt"
+    },
+    {
+      "name": "hybrid_3_road_rrf_k100",
+      "type": "fusion",
+      "searches": [
+        "fulltext_search_k100",
+        "dense_search_k100",
+        "sparse_search_k100"
+      ],
+      "params": {
+        "method": "rrf",
+        "top_k": 100
+      },
+      "output_file": "hybrid_3_road_rrf_k100.txt"
+    },
+    {
+      "name": "fulltext_search_k1000",
+      "type": "match_text",
+      "queries": {
+        "file": "/home/ubuntu/infinity/experiments/load_experiments/DBPedia_en/queries_with_id.csv",
+        "column": "text"
+      },
+      "params": {
+        "column": "text",
+        "top_k": 1000
+      },
+      "output_file": "fulltext_result_k1000.txt"
+    },
+    {
+      "name": "dense_search_k1000",
+      "type": "match_dense",
+      "queries": {
+        "file": "/home/ubuntu/data_download_data/embedding_reserve/DBPedia_en/query_dense_embeddings/vectors"
+      },
+      "params": {
+        "column": "dense_vec",
+        "top_k": 1000,
+        "metric": "ip",
+        "extra_params": {
+          "ef": 600
+        }
+      },
+      "output_file": "dense_result_k1000.txt"
+    },
+    {
+      "name": "sparse_search_k1000",
+      "type": "match_sparse",
+      "queries": {
+        "file": "/home/ubuntu/data_download_data/embedding_reserve/DBPedia_en/query_sparse_embeddings/vectors"
+      },
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 1000,
+        "metric": "ip"
+      },
+      "output_file": "sparse_result_k1000.txt"
+    },
+    {
+      "name": "hybrid_2_road_rrf_k1000",
+      "type": "fusion",
+      "searches": [
+        "fulltext_search_k1000",
+        "dense_search_k1000"
+      ],
+      "params": {
+        "method": "rrf",
+        "top_k": 1000
+      },
+      "output_file": "hybrid_2_road_rrf_k1000.txt"
+    },
+    {
+      "name": "hybrid_3_road_rrf_k1000",
+      "type": "fusion",
+      "searches": [
+        "fulltext_search_k1000",
+        "dense_search_k1000",
+        "sparse_search_k1000"
+      ],
+      "params": {
+        "method": "rrf",
+        "top_k": 1000
+      },
+      "output_file": "hybrid_3_road_rrf_k1000.txt"
+    }
+  ]
+}

@@ -1,0 +1,361 @@
+{
+  "name": "MS_MARCO_en",
+  "db_name": "default_db",
+  "table_name": "MS_MARCO_en_Table",
+  "schema": {
+    "docid": "varchar",
+    "text": "varchar",
+    "dense_vec": "vector,1024,float",
+    "sparse_vec": "sparse,250002,float,int"
+  },
+  "data": {
+    "corpus_path": "/home/ubuntu/data_download_data/data_download/dataset/MS_MARCO_en/msmarco/MS_MARCO_en_combine_corpus.csv",
+    "dense_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/dense_embeddings/vectors",
+    "sparse_embeddings_dir": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/sparse_embeddings/vectors"
+  },
+  "indexes": [
+    {
+      "name": "fulltext_index",
+      "column": "text",
+      "type": "FullText",
+      "params": {}
+    },
+    {
+      "name": "hnsw_index",
+      "column": "dense_vec",
+      "type": "Hnsw",
+      "params": {
+        "m": 16,
+        "ef_construction": 200,
+        "metric": "ip",
+        "encode": "lvq"
+      }
+    },
+    {
+      "name": "bmp_index",
+      "column": "sparse_vec",
+      "type": "BMP",
+      "params": {
+        "block_size": 8,
+        "compress_type": "compress"
+      },
+      "optimize": {
+        "topk": 1000
+      }
+    }
+  ],
+  "search_tasks": [
+    {
+      "name": "fulltext_search_10",
+      "type": "fulltext",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search/single_road/fulltext_result.txt",
+      "params": {
+        "column": "text",
+        "top_k": 10
+      }
+    },
+    {
+      "name": "dense_search_10",
+      "type": "dense",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_dense_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search/single_road/dense_result.txt",
+      "params": {
+        "column": "dense_vec",
+        "top_k": 10,
+        "metric": "ip",
+        "ef": 200
+      }
+    },
+    {
+      "name": "sparse_search_10",
+      "type": "sparse",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_sparse_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search/single_road/sparse_result.txt",
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 10,
+        "metric": "ip"
+      }
+    },
+    {
+      "name": "hybrid_search_2_roads_10",
+      "type": "hybrid",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search/two_roads/fulltext_dense_result.txt",
+      "params": {
+        "fusion": {
+          "method": "rrf",
+          "top_k": 10
+        },
+        "searches": [
+          {
+            "type": "fulltext",
+            "query_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/queries_with_id.csv",
+            "params": {
+              "column": "text",
+              "top_k": 10
+            }
+          },
+          {
+            "type": "dense",
+            "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_dense_embeddings/vectors",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 10,
+              "metric": "ip",
+              "ef": 200
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "hybrid_search_3_roads_10",
+      "type": "hybrid",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search/three_roads/fulltext_dense_sparse_result.txt",
+      "params": {
+        "fusion": {
+          "method": "rrf",
+          "top_k": 10
+        },
+        "searches": [
+          {
+            "type": "fulltext",
+            "query_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/queries_with_id.csv",
+            "params": {
+              "column": "text",
+              "top_k": 10
+            }
+          },
+          {
+            "type": "dense",
+            "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_dense_embeddings/vectors",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 10,
+              "metric": "ip",
+              "ef": 200
+            }
+          },
+          {
+            "type": "sparse",
+            "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_sparse_embeddings/vectors",
+            "params": {
+              "column": "sparse_vec",
+              "top_k": 10,
+              "metric": "ip"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "fulltext_search_100",
+      "type": "fulltext",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search100/single_road/fulltext_result.txt",
+      "params": {
+        "column": "text",
+        "top_k": 100
+      }
+    },
+    {
+      "name": "dense_search_100",
+      "type": "dense",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_dense_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search100/single_road/dense_result.txt",
+      "params": {
+        "column": "dense_vec",
+        "top_k": 100,
+        "metric": "ip",
+        "ef": 200
+      }
+    },
+    {
+      "name": "sparse_search_100",
+      "type": "sparse",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_sparse_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search100/single_road/sparse_result.txt",
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 100,
+        "metric": "ip"
+      }
+    },
+    {
+      "name": "hybrid_search_2_roads_100",
+      "type": "hybrid",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search100/two_roads/fulltext_dense_result.txt",
+      "params": {
+        "fusion": {
+          "method": "rrf",
+          "top_k": 100
+        },
+        "searches": [
+          {
+            "type": "fulltext",
+            "query_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/queries_with_id.csv",
+            "params": {
+              "column": "text",
+              "top_k": 100
+            }
+          },
+          {
+            "type": "dense",
+            "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_dense_embeddings/vectors",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 100,
+              "metric": "ip",
+              "ef": 200
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "hybrid_search_3_roads_100",
+      "type": "hybrid",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search100/three_roads/fulltext_dense_sparse_result.txt",
+      "params": {
+        "fusion": {
+          "method": "rrf",
+          "top_k": 100
+        },
+        "searches": [
+          {
+            "type": "fulltext",
+            "query_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/queries_with_id.csv",
+            "params": {
+              "column": "text",
+              "top_k": 100
+            }
+          },
+          {
+            "type": "dense",
+            "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_dense_embeddings/vectors",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 100,
+              "metric": "ip",
+              "ef": 200
+            }
+          },
+          {
+            "type": "sparse",
+            "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_sparse_embeddings/vectors",
+            "params": {
+              "column": "sparse_vec",
+              "top_k": 100,
+              "metric": "ip"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "fulltext_search_1000",
+      "type": "fulltext",
+      "query_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/queries_with_id.csv",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search1000/single_road/fulltext_result.txt",
+      "params": {
+        "column": "text",
+        "top_k": 1000
+      }
+    },
+    {
+      "name": "dense_search_1000",
+      "type": "dense",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_dense_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search1000/single_road/dense_result.txt",
+      "params": {
+        "column": "dense_vec",
+        "top_k": 1000,
+        "metric": "ip",
+        "ef": 200
+      }
+    },
+    {
+      "name": "sparse_search_1000",
+      "type": "sparse",
+      "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_sparse_embeddings/vectors",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search1000/single_road/sparse_result.txt",
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 1000,
+        "metric": "ip"
+      }
+    },
+    {
+      "name": "hybrid_search_2_roads_1000",
+      "type": "hybrid",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search1000/two_roads/fulltext_dense_result.txt",
+      "params": {
+        "fusion": {
+          "method": "rrf",
+          "top_k": 1000
+        },
+        "searches": [
+          {
+            "type": "fulltext",
+            "query_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/queries_with_id.csv",
+            "params": {
+              "column": "text",
+              "top_k": 1000
+            }
+          },
+          {
+            "type": "dense",
+            "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_dense_embeddings/vectors",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 1000,
+              "metric": "ip",
+              "ef": 200
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "hybrid_search_3_roads_1000",
+      "type": "hybrid",
+      "output_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/search1000/three_roads/fulltext_dense_sparse_result.txt",
+      "params": {
+        "fusion": {
+          "method": "rrf",
+          "top_k": 1000
+        },
+        "searches": [
+          {
+            "type": "fulltext",
+            "query_path": "/home/ubuntu/infinity/experiments/load_experiments/MS_MARCO_en/queries_with_id.csv",
+            "params": {
+              "column": "text",
+              "top_k": 1000
+            }
+          },
+          {
+            "type": "dense",
+            "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_dense_embeddings/vectors",
+            "params": {
+              "column": "dense_vec",
+              "top_k": 1000,
+              "metric": "ip",
+              "ef": 200
+            }
+          },
+          {
+            "type": "sparse",
+            "query_path": "/home/ubuntu/data_download_data/embedding_reserve/MS_MARCO_en/query_sparse_embeddings/vectors",
+            "params": {
+              "column": "sparse_vec",
+              "top_k": 1000,
+              "metric": "ip"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

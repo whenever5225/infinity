@@ -1,0 +1,489 @@
+{
+  "name": "CQADupStack_en",
+  "db_name": "default_db",
+  "table_name": "CQADupStack_en_Table",
+  "schema": {
+    "docid": "varchar",
+    "text": "varchar",
+    "dense_vec": "vector,1024,float",
+    "sparse_vec": "sparse,250002,float,int",
+    "tensor_vec": "tensor,96,float"
+  },
+  "data": {
+    "corpus_path": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/CQADupStack_en_combine_corpus.csv",
+    "dense_embeddings_dir": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/dense_embeddings/vectors",
+    "sparse_embeddings_dir": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/sparse_embeddings/vectors",
+    "tensor_embeddings_dir": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/tensor_embeddings/vectors"
+  },
+  "indexes": [
+    {
+      "name": "fulltext_index",
+      "column": "text",
+      "type": "FullText",
+      "params": {}
+    },
+    {
+      "name": "hnsw_index",
+      "column": "dense_vec",
+      "type": "Hnsw",
+      "params": {
+        "m": 16,
+        "ef_construction": 200,
+        "metric": "ip",
+        "encode": "lvq"
+      }
+    },
+    {
+      "name": "bmp_index",
+      "column": "sparse_vec",
+      "type": "BMP",
+      "params": {
+        "block_size": 8,
+        "compress_type": "compress"
+      },
+      "optimize": {
+        "topk": 1000
+      }
+    },
+    {
+      "name": "emvb_index",
+      "column": "tensor_vec",
+      "type": "EMVB",
+      "params": {
+        "pq_subspace_num": 32,
+        "pq_subspace_bits": 8
+      }
+    }
+  ],
+  "search_tasks": [
+    {
+      "name": "fulltext_search_k10",
+      "output_file": "results/fulltext_k10.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+      "search_type": "fulltext",
+      "params": {
+        "column": "text",
+        "top_k": 10
+      }
+    },
+    {
+      "name": "dense_search_k10",
+      "output_file": "results/dense_k10.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_dense_embeddings/vectors",
+      "search_type": "dense",
+      "params": {
+        "column": "dense_vec",
+        "top_k": 10,
+        "metric": "ip"
+      }
+    },
+    {
+      "name": "sparse_search_k10",
+      "output_file": "results/sparse_k10.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_sparse_embeddings/vectors",
+      "search_type": "sparse",
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 10,
+        "metric": "ip"
+      }
+    },
+    {
+      "name": "tensor_search_k10",
+      "output_file": "results/tensor_k10.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_tensor_embeddings/vectors",
+      "search_type": "tensor",
+      "params": {
+        "column": "tensor_vec",
+        "top_k": 10
+      }
+    },
+    {
+      "name": "hybrid_2_road_rrf_k10",
+      "output_file": "results/hybrid_2_road_rrf_k10.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+      "search_type": "hybrid",
+      "params": {
+        "searches": [
+          {
+            "search_type": "fulltext",
+            "column": "text",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+            "top_k": 10
+          },
+          {
+            "search_type": "dense",
+            "column": "dense_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_dense_embeddings/vectors",
+            "top_k": 10,
+            "metric": "ip"
+          }
+        ],
+        "fusion": {
+          "method": "rrf",
+          "top_k": 10
+        }
+      }
+    },
+    {
+      "name": "hybrid_3_road_rrf_k10",
+      "output_file": "results/hybrid_3_road_rrf_k10.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+      "search_type": "hybrid",
+      "params": {
+        "searches": [
+          {
+            "search_type": "fulltext",
+            "column": "text",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+            "top_k": 10
+          },
+          {
+            "search_type": "dense",
+            "column": "dense_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_dense_embeddings/vectors",
+            "top_k": 10,
+            "metric": "ip"
+          },
+          {
+            "search_type": "sparse",
+            "column": "sparse_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_sparse_embeddings/vectors",
+            "top_k": 10,
+            "metric": "ip"
+          }
+        ],
+        "fusion": {
+          "method": "rrf",
+          "top_k": 10
+        }
+      }
+    },
+    {
+      "name": "hybrid_4_road_rrf_k10",
+      "output_file": "results/hybrid_4_road_rrf_k10.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+      "search_type": "hybrid",
+      "params": {
+        "searches": [
+          {
+            "search_type": "fulltext",
+            "column": "text",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+            "top_k": 10
+          },
+          {
+            "search_type": "dense",
+            "column": "dense_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_dense_embeddings/vectors",
+            "top_k": 10,
+            "metric": "ip"
+          },
+          {
+            "search_type": "sparse",
+            "column": "sparse_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_sparse_embeddings/vectors",
+            "top_k": 10,
+            "metric": "ip"
+          },
+          {
+            "search_type": "tensor",
+            "column": "tensor_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_tensor_embeddings/vectors",
+            "top_k": 10
+          }
+        ],
+        "fusion": {
+          "method": "rrf",
+          "top_k": 10
+        }
+      }
+    },
+    {
+      "name": "fulltext_search_k100",
+      "output_file": "results/fulltext_k100.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+      "search_type": "fulltext",
+      "params": {
+        "column": "text",
+        "top_k": 100
+      }
+    },
+    {
+      "name": "dense_search_k100",
+      "output_file": "results/dense_k100.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_dense_embeddings/vectors",
+      "search_type": "dense",
+      "params": {
+        "column": "dense_vec",
+        "top_k": 100,
+        "metric": "ip"
+      }
+    },
+    {
+      "name": "sparse_search_k100",
+      "output_file": "results/sparse_k100.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_sparse_embeddings/vectors",
+      "search_type": "sparse",
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 100,
+        "metric": "ip"
+      }
+    },
+    {
+      "name": "tensor_search_k100",
+      "output_file": "results/tensor_k100.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_tensor_embeddings/vectors",
+      "search_type": "tensor",
+      "params": {
+        "column": "tensor_vec",
+        "top_k": 100
+      }
+    },
+    {
+      "name": "hybrid_2_road_rrf_k100",
+      "output_file": "results/hybrid_2_road_rrf_k100.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+      "search_type": "hybrid",
+      "params": {
+        "searches": [
+          {
+            "search_type": "fulltext",
+            "column": "text",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+            "top_k": 100
+          },
+          {
+            "search_type": "dense",
+            "column": "dense_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_dense_embeddings/vectors",
+            "top_k": 100,
+            "metric": "ip"
+          }
+        ],
+        "fusion": {
+          "method": "rrf",
+          "top_k": 100
+        }
+      }
+    },
+    {
+      "name": "hybrid_3_road_rrf_k100",
+      "output_file": "results/hybrid_3_road_rrf_k100.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+      "search_type": "hybrid",
+      "params": {
+        "searches": [
+          {
+            "search_type": "fulltext",
+            "column": "text",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+            "top_k": 100
+          },
+          {
+            "search_type": "dense",
+            "column": "dense_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_dense_embeddings/vectors",
+            "top_k": 100,
+            "metric": "ip"
+          },
+          {
+            "search_type": "sparse",
+            "column": "sparse_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_sparse_embeddings/vectors",
+            "top_k": 100,
+            "metric": "ip"
+          }
+        ],
+        "fusion": {
+          "method": "rrf",
+          "top_k": 100
+        }
+      }
+    },
+    {
+      "name": "hybrid_4_road_rrf_k100",
+      "output_file": "results/hybrid_4_road_rrf_k100.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+      "search_type": "hybrid",
+      "params": {
+        "searches": [
+          {
+            "search_type": "fulltext",
+            "column": "text",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+            "top_k": 100
+          },
+          {
+            "search_type": "dense",
+            "column": "dense_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_dense_embeddings/vectors",
+            "top_k": 100,
+            "metric": "ip"
+          },
+          {
+            "search_type": "sparse",
+            "column": "sparse_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_sparse_embeddings/vectors",
+            "top_k": 100,
+            "metric": "ip"
+          },
+          {
+            "search_type": "tensor",
+            "column": "tensor_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_tensor_embeddings/vectors",
+            "top_k": 100
+          }
+        ],
+        "fusion": {
+          "method": "rrf",
+          "top_k": 100
+        }
+      }
+    },
+    {
+      "name": "fulltext_search_k1000",
+      "output_file": "results/fulltext_k1000.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+      "search_type": "fulltext",
+      "params": {
+        "column": "text",
+        "top_k": 1000
+      }
+    },
+    {
+      "name": "dense_search_k1000",
+      "output_file": "results/dense_k1000.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_dense_embeddings/vectors",
+      "search_type": "dense",
+      "params": {
+        "column": "dense_vec",
+        "top_k": 1000,
+        "metric": "ip"
+      }
+    },
+    {
+      "name": "sparse_search_k1000",
+      "output_file": "results/sparse_k1000.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_sparse_embeddings/vectors",
+      "search_type": "sparse",
+      "params": {
+        "column": "sparse_vec",
+        "top_k": 1000,
+        "metric": "ip"
+      }
+    },
+    {
+      "name": "tensor_search_k1000",
+      "output_file": "results/tensor_k1000.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_tensor_embeddings/vectors",
+      "search_type": "tensor",
+      "params": {
+        "column": "tensor_vec",
+        "top_k": 1000
+      }
+    },
+    {
+      "name": "hybrid_2_road_rrf_k1000",
+      "output_file": "results/hybrid_2_road_rrf_k1000.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+      "search_type": "hybrid",
+      "params": {
+        "searches": [
+          {
+            "search_type": "fulltext",
+            "column": "text",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+            "top_k": 1000
+          },
+          {
+            "search_type": "dense",
+            "column": "dense_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_dense_embeddings/vectors",
+            "top_k": 1000,
+            "metric": "ip"
+          }
+        ],
+        "fusion": {
+          "method": "rrf",
+          "top_k": 1000
+        }
+      }
+    },
+    {
+      "name": "hybrid_3_road_rrf_k1000",
+      "output_file": "results/hybrid_3_road_rrf_k1000.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+      "search_type": "hybrid",
+      "params": {
+        "searches": [
+          {
+            "search_type": "fulltext",
+            "column": "text",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+            "top_k": 1000
+          },
+          {
+            "search_type": "dense",
+            "column": "dense_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_dense_embeddings/vectors",
+            "top_k": 1000,
+            "metric": "ip"
+          },
+          {
+            "search_type": "sparse",
+            "column": "sparse_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_sparse_embeddings/vectors",
+            "top_k": 1000,
+            "metric": "ip"
+          }
+        ],
+        "fusion": {
+          "method": "rrf",
+          "top_k": 1000
+        }
+      }
+    },
+    {
+      "name": "hybrid_4_road_rrf_k1000",
+      "output_file": "results/hybrid_4_road_rrf_k1000.trec",
+      "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+      "search_type": "hybrid",
+      "params": {
+        "searches": [
+          {
+            "search_type": "fulltext",
+            "column": "text",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/english/queries_decline_with_id.csv",
+            "top_k": 1000
+          },
+          {
+            "search_type": "dense",
+            "column": "dense_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_dense_embeddings/vectors",
+            "top_k": 1000,
+            "metric": "ip"
+          },
+          {
+            "search_type": "sparse",
+            "column": "sparse_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_sparse_embeddings/vectors",
+            "top_k": 1000,
+            "metric": "ip"
+          },
+          {
+            "search_type": "tensor",
+            "column": "tensor_vec",
+            "query_file": "/home/ubuntu/infinity/experiments/small_embedding/CQADupStack_en/query_tensor_embeddings/vectors",
+            "top_k": 1000
+          }
+        ],
+        "fusion": {
+          "method": "rrf",
+          "top_k": 1000
+        }
+      }
+    }
+  ]
+}

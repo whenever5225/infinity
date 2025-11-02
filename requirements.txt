@@ -1,0 +1,8 @@
+infinity-sdk
+datasets
+numpy
+pandas
+torch
+transformers
+beir
+ptrec_eval

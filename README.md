@@ -20,7 +20,7 @@ This work presents the **first systematic benchmark** of advanced hybrid search 
   pip install -r requirements.txt
   ```
 
-## 📖 Repository Structure
+## 🏛️ Repository Structure
 
 This repository is split into two main components to serve different purposes:
 
